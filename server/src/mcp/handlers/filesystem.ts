@@ -1,5 +1,11 @@
 import type { HandlerConfig, HandlerContext } from '../types.js';
 import { getFilesystemContent, listDirectory } from '../../data/filesystem.js';
+import wordDocuments from '../../data/api/word_documents.json';
+
+const WORD_DOCUMENTS: Record<string, string> = wordDocuments as Record<
+  string,
+  string
+>;
 
 export async function handleFilesystem(
   handlerConfig: HandlerConfig,
@@ -22,6 +28,10 @@ export async function handleFilesystem(
     }
     const head = args.head as number | undefined;
     const tail = args.tail as number | undefined;
+
+    if (filePath.endsWith('.docx') && WORD_DOCUMENTS[filePath]) {
+      return WORD_DOCUMENTS[filePath];
+    }
 
     const content = await getFilesystemContent(filePath);
     if (content === null) {
