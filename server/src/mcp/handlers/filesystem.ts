@@ -1,11 +1,11 @@
 import type { HandlerConfig, HandlerContext } from '../types.js';
 import { getFilesystemContent, listDirectory } from '../../data/filesystem.js';
 
-export function handleFilesystem(
+export async function handleFilesystem(
   _handlerConfig: HandlerConfig,
   args: Record<string, unknown>,
   ctx: HandlerContext
-): unknown {
+): Promise<unknown> {
   const toolName = ctx.toolName;
 
   if (
@@ -19,7 +19,7 @@ export function handleFilesystem(
     const head = args.head as number | undefined;
     const tail = args.tail as number | undefined;
 
-    const content = getFilesystemContent(filePath);
+    const content = await getFilesystemContent(filePath);
     if (content === null) {
       return { error: `File not found: ${filePath}` };
     }
@@ -43,7 +43,7 @@ export function handleFilesystem(
       {};
 
     for (const path of paths) {
-      const content = getFilesystemContent(path);
+      const content = await getFilesystemContent(path);
       if (content === null) {
         results[path] = { content: null, error: `File not found: ${path}` };
       } else {

@@ -1,11 +1,11 @@
-import type { Hono } from 'hono';
+import type { Hono, Env } from 'hono';
 import {
   getOrCreateVirtualServer,
   getAvailableServers,
   getServerDetails,
 } from './virtualServerRegistry.js';
 
-export function mountMcpRoutes(app: Hono): void {
+export function mountMcpRoutes<E extends Env>(app: Hono<E>): void {
   app.get('/', (c) => {
     const servers = getAvailableServers();
     return c.json({

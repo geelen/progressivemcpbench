@@ -3,5 +3,9 @@ main = "src/index.ts"
 compatibility_date = "2025-01-01"
 account_id = "a4015632099d4648bea283e040e2badf"
 
+[assets]
+directory = "../data/files"
+binding = "ASSETS"
+
 [dev]
 port = 9123
