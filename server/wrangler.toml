@@ -1,0 +1,7 @@
+name = "synthetic-mcp"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+account_id = "a4015632099d4648bea283e040e2badf"
+
+[dev]
+port = 8787
