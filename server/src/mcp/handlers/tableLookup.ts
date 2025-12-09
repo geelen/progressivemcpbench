@@ -11,9 +11,17 @@ export function handleTableLookup(
     throw new Error('No dataset specified for table_lookup handler');
   }
 
-  const dataset = getDataset(datasetPath);
+  let dataset = getDataset(datasetPath);
   if (!dataset) {
     return { error: `Dataset not found: ${datasetPath}` };
+  }
+
+  const nestedPath = handlerConfig.nested_path;
+  if (nestedPath && typeof dataset === 'object' && dataset !== null) {
+    const nested = (dataset as Record<string, unknown>)[nestedPath];
+    if (nested !== undefined) {
+      dataset = nested;
+    }
   }
 
   const keyField = handlerConfig.key_field;

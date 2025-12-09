@@ -14,6 +14,7 @@ export interface HandlerConfig {
   type: HandlerType;
   dataset?: string;
   key_field?: string;
+  nested_path?: string;
   response?: unknown;
   operation?: string;
   value?: unknown;
