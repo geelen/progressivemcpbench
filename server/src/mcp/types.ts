@@ -22,6 +22,7 @@ export interface HandlerConfig {
   decoys?: unknown[];
   max_results?: number;
   result_format?: string;
+  root?: string;
 }
 
 export interface InputSchema {

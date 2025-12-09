@@ -3,12 +3,12 @@ import { StreamableHTTPTransport } from '@hono/mcp';
 import { SERVERS_CONFIG } from '../config/servers.js';
 import { buildMcpServerFromConfig } from './buildServer.js';
 
-interface VirtualServerEntry {
+export interface VirtualServerEntry {
   mcpServer: McpServer;
   transport: StreamableHTTPTransport;
 }
 
-const registry: Record<string, VirtualServerEntry> = {};
+const serverRegistry: Record<string, McpServer> = {};
 
 export function getOrCreateVirtualServer(
   name: string
@@ -17,14 +17,15 @@ export function getOrCreateVirtualServer(
     return undefined;
   }
 
-  if (!registry[name]) {
+  if (!serverRegistry[name]) {
     const config = SERVERS_CONFIG[name];
-    const mcpServer = buildMcpServerFromConfig(config);
-    const transport = new StreamableHTTPTransport();
-    registry[name] = { mcpServer, transport };
+    serverRegistry[name] = buildMcpServerFromConfig(config);
   }
 
-  return registry[name];
+  const mcpServer = serverRegistry[name];
+  const transport = new StreamableHTTPTransport();
+
+  return { mcpServer, transport };
 }
 
 export function getAvailableServers(): string[] {

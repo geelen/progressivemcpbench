@@ -2,6 +2,10 @@ import webMetadata from './web/metadata.json';
 import webSearchIndex from './web/search_index.json';
 import decoyUrls from './web/decoy_urls.json';
 
+import hnStory44490510 from './web/html/news_ycombinator_com_item_id_44490510.html';
+import hnStory45973709 from './web/html/news_ycombinator_com_item_id_45973709.html';
+import wikiLlullaillaco from './web/html/en_wikipedia_org_wiki_Llullaillaco.html';
+
 interface WebMetadataEntry {
   id?: string;
   title?: string;
@@ -37,7 +41,11 @@ const DECOY_URLS: DecoyUrlEntry[] = (
   decoyUrls as { decoys?: DecoyUrlEntry[] }
 ).decoys ?? [];
 
-const HTML_CONTENT_CACHE: Record<string, string> = {};
+const HTML_CONTENT: Record<string, string> = {
+  'https://news.ycombinator.com/item?id=44490510': hnStory44490510,
+  'https://news.ycombinator.com/item?id=45973709': hnStory45973709,
+  'https://en.wikipedia.org/wiki/Llullaillaco': wikiLlullaillaco,
+};
 
 export function getWebMetadata(): Record<string, WebMetadataEntry> {
   return WEB_METADATA;
@@ -52,14 +60,14 @@ export function getDecoyUrls(): DecoyUrlEntry[] {
 }
 
 export function getWebHtmlContent(url: string): string | null {
-  if (HTML_CONTENT_CACHE[url]) {
-    return HTML_CONTENT_CACHE[url];
+  if (HTML_CONTENT[url]) {
+    return HTML_CONTENT[url];
   }
 
   const entry = WEB_METADATA[url];
-  if (!entry || !entry.html_path) {
+  if (!entry) {
     return null;
   }
 
-  return `<html><head><title>${entry.title ?? ''}</title></head><body><p>Synthetic HTML content for ${url}</p></body></html>`;
+  return null;
 }

@@ -2,20 +2,24 @@ import type { HandlerConfig, HandlerContext } from '../types.js';
 import { getFilesystemContent, listDirectory } from '../../data/filesystem.js';
 
 export async function handleFilesystem(
-  _handlerConfig: HandlerConfig,
+  handlerConfig: HandlerConfig,
   args: Record<string, unknown>,
   ctx: HandlerContext
 ): Promise<unknown> {
   const toolName = ctx.toolName;
+  const root = handlerConfig.root ?? '';
 
   if (
     toolName === 'read_file' ||
     toolName === 'document_reader' ||
     toolName === 'get_document_text'
   ) {
-    const filePath = String(
+    let filePath = String(
       args.path ?? args.filePath ?? args.filename ?? ''
     );
+    if (root && !filePath.startsWith('/')) {
+      filePath = `${root}/${filePath}`;
+    }
     const head = args.head as number | undefined;
     const tail = args.tail as number | undefined;
 
