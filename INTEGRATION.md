@@ -52,7 +52,7 @@ The server speaks the **MCP Streamable HTTP Transport** protocol:
 
 **Local Development:**
 ```
-http://localhost:8787/mcp/{serverName}
+http://localhost:9123/mcp/{serverName}
 ```
 
 **Production (when deployed):**
@@ -63,7 +63,7 @@ https://synthetic-mcp.{your-subdomain}.workers.dev/mcp/{serverName}
 ### Example: Initialize Connection
 
 ```bash
-curl -X POST http://localhost:8787/mcp/playwright \
+curl -X POST http://localhost:9123/mcp/playwright \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
   -d '{
@@ -87,7 +87,7 @@ data: {"result":{"protocolVersion":"2024-11-05","capabilities":{"tools":{"listCh
 ### Example: List Tools
 
 ```bash
-curl -X POST http://localhost:8787/mcp/playwright \
+curl -X POST http://localhost:9123/mcp/playwright \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
   -d '{"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}}'
@@ -96,7 +96,7 @@ curl -X POST http://localhost:8787/mcp/playwright \
 ### Example: Call a Tool
 
 ```bash
-curl -X POST http://localhost:8787/mcp/arxiv-mcp-server \
+curl -X POST http://localhost:9123/mcp/arxiv-mcp-server \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
   -d '{
@@ -122,7 +122,7 @@ const client = new Client({
 });
 
 const transport = new StreamableHTTPClientTransport(
-  new URL('http://localhost:8787/mcp/playwright')
+  new URL('http://localhost:9123/mcp/playwright')
 );
 
 await client.connect(transport);
@@ -168,7 +168,7 @@ Tools use different handler types to generate responses:
 ```bash
 cd server
 pnpm install
-pnpm dev  # Starts on http://localhost:8787
+pnpm dev  # Starts on http://localhost:9123
 ```
 
 ## Deploying to Cloudflare
