@@ -1,0 +1,228 @@
+{
+  "/root/excel/Local_Electronic_Sales.xlsx": {
+    "sheets": [
+      {
+        "name": "Sheet1",
+        "headers": [
+          "Month",
+          "TVs",
+          "Mobile Phones",
+          "Laptops",
+          "Total"
+        ],
+        "rows": [
+          [
+            44562,
+            145,
+            335,
+            82,
+            562
+          ],
+          [
+            44593,
+            145,
+            362,
+            126,
+            633
+          ],
+          [
+            44621,
+            105,
+            311,
+            95,
+            511
+          ],
+          [
+            44652,
+            171,
+            259,
+            93,
+            523
+          ],
+          [
+            44682,
+            178,
+            277,
+            107,
+            562
+          ],
+          [
+            44713,
+            167,
+            292,
+            145,
+            604
+          ],
+          [
+            44743,
+            200,
+            385,
+            77,
+            662
+          ],
+          [
+            44774,
+            181,
+            388,
+            78,
+            647
+          ],
+          [
+            44805,
+            152,
+            291,
+            83,
+            526
+          ],
+          [
+            44835,
+            143,
+            345,
+            102,
+            590
+          ],
+          [
+            44866,
+            114,
+            399,
+            99,
+            612
+          ],
+          [
+            44896,
+            109,
+            250,
+            101,
+            460
+          ],
+          [
+            "Total",
+            1810,
+            3894,
+            1188
+          ]
+        ],
+        "rowCount": 13,
+        "columnCount": 5
+      }
+    ]
+  },
+  "/root/excel/goods.xlsx": {
+    "sheets": [
+      {
+        "name": "Sheet1",
+        "headers": [],
+        "rows": [],
+        "rowCount": 0,
+        "columnCount": 0
+      }
+    ]
+  },
+  "/root/excel/people_data.xlsx": {
+    "sheets": [
+      {
+        "name": "people_data",
+        "headers": [
+          "Name",
+          "Gender",
+          "Height (cm)",
+          "Weight (kg)"
+        ],
+        "rows": [
+          [
+            "John Smith",
+            "Male",
+            178,
+            75
+          ],
+          [
+            "Emily White",
+            "Female",
+            162,
+            58
+          ],
+          [
+            "Michael Brown",
+            "Male",
+            185,
+            88
+          ],
+          [
+            "Sarah Green",
+            "Female",
+            155,
+            52
+          ],
+          [
+            "David Lee",
+            "Male",
+            170,
+            65
+          ],
+          [
+            "Olivia Clark",
+            "Female",
+            168,
+            63
+          ],
+          [
+            "Chris Miller",
+            "Male",
+            192,
+            95
+          ],
+          [
+            "Jessica Davis",
+            "Female",
+            160,
+            49
+          ],
+          [
+            "Daniel Wilson",
+            "Male",
+            175,
+            70
+          ],
+          [
+            "Sophia Moore",
+            "Female",
+            170,
+            60
+          ],
+          [
+            "James Taylor",
+            "Male",
+            180,
+            82
+          ],
+          [
+            "Mia Johnson",
+            "Female",
+            158,
+            55
+          ],
+          [
+            "Robert King",
+            "Male",
+            165,
+            60
+          ],
+          [
+            "Isabella Wright",
+            "Female",
+            172,
+            68
+          ],
+          [
+            "William Hall",
+            "Male",
+            183,
+            79
+          ]
+        ],
+        "rowCount": 15,
+        "columnCount": 4
+      }
+    ]
+  }
+}
