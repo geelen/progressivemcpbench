@@ -3347,8 +3347,7 @@
           ]
         },
         "handler": {
-          "type": "filesystem",
-          "root": "/root"
+          "type": "excel_reader"
         }
       },
       {

@@ -286,6 +286,23 @@ describe('SearXNG Document Tools', () => {
       expect(result).not.toMatchObject({ error: expect.any(String) });
     }
   });
+
+  it('should read Excel via excel_read', async () => {
+    const excelHandler: HandlerConfig = {
+      type: 'excel_reader',
+    };
+
+    const result = await executeHandler(
+      excelHandler,
+      { inputPath: '/root/excel/people_data.xlsx', includeHeaders: true },
+      makeCtx('searxng', 'excel_read')
+    );
+
+    const data = result as { headers?: string[]; rows?: unknown[][] };
+    expect(data.headers).toContain('Name');
+    expect(data.rows).toBeDefined();
+    expect(data.rows!.length).toBeGreaterThan(0);
+  });
 });
 
 describe('Web Corpus / Playwright', () => {
