@@ -30,3 +30,17 @@ export function getOrCreateVirtualServer(
 export function getAvailableServers(): string[] {
   return Object.keys(SERVERS_CONFIG);
 }
+
+export interface ServerDetails {
+  name: string;
+  description: string;
+  tools: string[];
+}
+
+export function getServerDetails(): ServerDetails[] {
+  return Object.entries(SERVERS_CONFIG).map(([name, config]) => ({
+    name,
+    description: config.description ?? '',
+    tools: config.tools.map((t) => t.name),
+  }));
+}

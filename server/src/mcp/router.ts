@@ -2,6 +2,7 @@ import type { Hono } from 'hono';
 import {
   getOrCreateVirtualServer,
   getAvailableServers,
+  getServerDetails,
 } from './virtualServerRegistry.js';
 
 export function mountMcpRoutes(app: Hono): void {
@@ -15,7 +16,7 @@ export function mountMcpRoutes(app: Hono): void {
   });
 
   app.get('/servers', (c) => {
-    const servers = getAvailableServers();
+    const servers = getServerDetails();
     return c.json({ servers });
   });
 
