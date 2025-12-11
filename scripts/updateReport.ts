@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readFile, writeFile, mkdir, stat } from "fs/promises";
+import { readFile, writeFile, mkdir } from "fs/promises";
 import { dirname, basename, extname } from "path";
 import { parseArgs } from "util";
 import { MODELS, STRATEGIES } from "./benchConfig";
@@ -31,15 +31,6 @@ function generateRunId(run: RunSummary): string {
   return `${run.modelId}__${run.strategyId}`;
 }
 
-async function getFileMtime(filePath: string): Promise<number> {
-  const fileStat = await stat(filePath);
-  return fileStat.mtimeMs;
-}
-
-interface RunWithMtime extends RunSummary {
-  _mtime: number; // internal tracking, not persisted
-}
-
 interface UpdateOptions {
   logsDir: string;
   outputPath: string;
@@ -57,13 +48,12 @@ async function updateReport(options: UpdateOptions): Promise<void> {
     : 0;
 
   // Start with existing runs (keyed by model::strategy)
-  const latestByCombo = new Map<string, RunWithMtime>();
+  const latestByCombo = new Map<string, RunSummary>();
   
   if (existingReport && !full) {
     for (const run of existingReport.runs) {
       const comboKey = `${run.modelId}::${run.strategyId}`;
-      // Use 0 as _mtime for existing runs (any new log will be newer)
-      latestByCombo.set(comboKey, { ...run, _mtime: 0 });
+      latestByCombo.set(comboKey, run);
     }
   }
 
@@ -86,25 +76,23 @@ async function updateReport(options: UpdateOptions): Promise<void> {
     }
     
     run.id = generateRunId(run);
-    
-    const mtime = await getFileMtime(run.logPath);
     const comboKey = `${run.modelId}::${run.strategyId}`;
     
     const existing = latestByCombo.get(comboKey);
-    if (!existing || mtime > existing._mtime) {
+    const runAtMs = new Date(run.runAt).getTime();
+    const existingRunAtMs = existing ? new Date(existing.runAt).getTime() : 0;
+    
+    if (!existing || runAtMs > existingRunAtMs) {
       if (existing) {
         updatedCount++;
       } else {
         newCount++;
       }
-      latestByCombo.set(comboKey, { ...run, _mtime: mtime });
+      latestByCombo.set(comboKey, run);
     }
   }
 
-  // Strip _mtime from final output
-  const finalRuns: RunSummary[] = Array.from(latestByCombo.values()).map(
-    ({ _mtime, ...run }) => run
-  );
+  const finalRuns: RunSummary[] = Array.from(latestByCombo.values());
 
   const report: ReportJson = {
     generatedAt: new Date().toISOString(),

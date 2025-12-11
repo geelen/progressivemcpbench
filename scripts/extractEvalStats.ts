@@ -349,9 +349,23 @@ async function findLogFiles(logPath: string): Promise<string[]> {
   return logFiles.sort();
 }
 
-export function aggregateStats(evalStats: EvalStats, mtime?: number): RunSummary {
+function parseTimestampFromFilename(logPath: string): string | null {
+  const filename = basename(logPath);
+  // Format: 2025-01-15T10-30-00+04-00_progressivemcpbench_model.eval
+  const match = filename.match(/^(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}[+-]\d{2}-\d{2})/);
+  if (match) {
+    // Convert 2025-01-15T10-30-00+04-00 to 2025-01-15T10:30:00+04:00
+    const ts = match[1]
+      .replace(/T(\d{2})-(\d{2})-(\d{2})/, "T$1:$2:$3")
+      .replace(/([+-])(\d{2})-(\d{2})$/, "$1$2:$3");
+    return new Date(ts).toISOString();
+  }
+  return null;
+}
+
+export function aggregateStats(evalStats: EvalStats): RunSummary {
   const samples = evalStats.sampleStats;
-  const runAt = mtime ? new Date(mtime).toISOString() : new Date().toISOString();
+  const runAt = parseTimestampFromFilename(evalStats.logPath) || new Date().toISOString();
 
   if (samples.length === 0) {
     return {
@@ -513,7 +527,6 @@ export async function extractEvalStats(options: ExtractOptions): Promise<RunSumm
   for (const logFile of logFiles) {
     console.log(`Processing ${logFile}`);
 
-    const fileStat = await stat(logFile);
     let evalStats: EvalStats;
     if (logFile.endsWith(".eval")) {
       evalStats = await parseEvalFile(logFile);
@@ -522,7 +535,7 @@ export async function extractEvalStats(options: ExtractOptions): Promise<RunSumm
     }
 
     if (evalStats.numSamples >= minSamples) {
-      const runSummary = aggregateStats(evalStats, fileStat.mtimeMs);
+      const runSummary = aggregateStats(evalStats);
       runs.push(runSummary);
     } else {
       console.log(`  Skipping: only ${evalStats.numSamples} samples (min: ${minSamples})`);
