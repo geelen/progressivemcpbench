@@ -143,7 +143,7 @@ export default function BenchmarkChart(props: Props) {
 
     return {
       chart: {
-        type: "bar" as const,
+        type: "line" as const,
         height: 500,
         toolbar: {
           show: false,
@@ -156,15 +156,15 @@ export default function BenchmarkChart(props: Props) {
         },
       },
       colors,
-      plotOptions: {
-        bar: {
-          horizontal: false,
-          columnWidth: "70%",
-          borderRadius: 2,
-        },
+      stroke: {
+        width: 2,
+        curve: "straight" as const,
       },
-      dataLabels: {
-        enabled: false,
+      markers: {
+        size: 5,
+        hover: {
+          size: 7,
+        },
       },
       series,
       xaxis: {
