@@ -1,5 +1,6 @@
 ---
 import ResultsTable from "../components/ResultsTable";
+import BenchmarkChart from "../components/BenchmarkChart";
 import type { ReportJson } from "../types/report";
 
 import reportData from "../../../data/reports/report.json";
@@ -77,6 +78,13 @@ const report = reportData as ReportJson;
         <div class="stat-value">{report.dimensions.strategies.length}</div>
       </div>
     </div>
+
+    <BenchmarkChart
+      client:load
+      runs={report.runs}
+      models={report.dimensions.models}
+      strategies={report.dimensions.strategies}
+    />
 
     <ResultsTable
       client:load
