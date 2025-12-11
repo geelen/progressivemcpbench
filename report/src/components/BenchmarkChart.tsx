@@ -1,5 +1,4 @@
 import { createSignal, createMemo, createEffect, onMount, onCleanup, For } from "solid-js";
-import * as echarts from "echarts";
 import type { RunSummary, ModelConfig, StrategyConfig } from "../types/report";
 
 interface Props {
@@ -14,23 +13,23 @@ interface MetricDef {
   key: MetricKey;
   label: string;
   getValue: (run: RunSummary) => number | null;
-  format: (v: number | null) => string;
-  unit?: string;
+  format: (v: number) => string;
+  yAxisFormat?: (v: number) => string;
 }
 
 const MODEL_COLORS = [
-  "#2563eb",
-  "#dc2626",
-  "#16a34a",
-  "#ca8a04",
-  "#9333ea",
-  "#ea580c",
-  "#0891b2",
-  "#be185d",
-  "#4f46e5",
-  "#059669",
-  "#7c3aed",
-  "#d97706",
+  "#2563eb", // blue
+  "#dc2626", // red
+  "#16a34a", // green
+  "#ca8a04", // yellow
+  "#9333ea", // purple
+  "#ea580c", // orange
+  "#0891b2", // cyan
+  "#be185d", // pink
+  "#4f46e5", // indigo
+  "#059669", // emerald
+  "#7c3aed", // violet
+  "#d97706", // amber
 ];
 
 const METRICS: MetricDef[] = [
@@ -38,55 +37,58 @@ const METRICS: MetricDef[] = [
     key: "score",
     label: "Score",
     getValue: (r) => r.score.mean,
-    format: (v) => (v === null ? "—" : v.toFixed(3)),
+    format: (v) => v.toFixed(3),
   },
   {
     key: "time",
     label: "Time (mean)",
     getValue: (r) => r.time.totalMean,
     format: (v) => {
-      if (v === null) return "—";
       if (v < 1) return `${(v * 1000).toFixed(0)}ms`;
       if (v < 60) return `${v.toFixed(1)}s`;
       return `${(v / 60).toFixed(1)}m`;
     },
-    unit: "s",
+    yAxisFormat: (v) => `${v.toFixed(1)}s`,
   },
   {
     key: "totalTokens",
     label: "Total Tokens",
     getValue: (r) => r.tokens.totalSum,
     format: (v) => {
-      if (v === null || v === 0) return "0";
       if (v < 1000) return v.toString();
       if (v < 1_000_000) return `${(v / 1000).toFixed(1)}K`;
       return `${(v / 1_000_000).toFixed(2)}M`;
+    },
+    yAxisFormat: (v) => {
+      if (v < 1000) return v.toString();
+      if (v < 1_000_000) return `${(v / 1000).toFixed(0)}K`;
+      return `${(v / 1_000_000).toFixed(1)}M`;
     },
   },
   {
     key: "modelCalls",
     label: "Model Calls",
     getValue: (r) => r.calls.modelCalls,
-    format: (v) => (v === null ? "—" : v.toString()),
+    format: (v) => v.toString(),
   },
   {
     key: "toolCalls",
     label: "Tool Calls",
     getValue: (r) => r.calls.toolCalls,
-    format: (v) => (v === null ? "—" : v.toString()),
+    format: (v) => v.toString(),
   },
   {
     key: "cacheHit",
     label: "Cache Hit Rate",
-    getValue: (r) => (r.cache.openaiHitRate !== null ? r.cache.openaiHitRate * 100 : null),
-    format: (v) => (v === null ? "—" : `${v.toFixed(1)}%`),
-    unit: "%",
+    getValue: (r) => r.cache.openaiHitRate,
+    format: (v) => `${(v * 100).toFixed(1)}%`,
+    yAxisFormat: (v) => `${(v * 100).toFixed(0)}%`,
   },
 ];
 
 export default function BenchmarkChart(props: Props) {
-  let containerRef: HTMLDivElement | undefined;
-  let chartInstance: echarts.ECharts | null = null;
+  let chartContainer: HTMLDivElement | undefined;
+  let chartInstance: any = null;
 
   const [selectedMetric, setSelectedMetric] = createSignal<MetricKey>("score");
   const [hiddenModels, setHiddenModels] = createSignal<Set<string>>(new Set());
@@ -119,11 +121,12 @@ export default function BenchmarkChart(props: Props) {
     return METRICS.find((m) => m.key === selectedMetric())!;
   });
 
-  const chartOption = createMemo(() => {
+  const getChartOptions = () => {
+    const metric = currentMetric();
     const strategies = sortedStrategies();
     const models = sortedModels().filter((m) => !hiddenModels().has(m.id));
     const runMap = runsByModelStrategy();
-    const metric = currentMetric();
+    const colors = models.map((m) => modelColorMap().get(m.id)!);
 
     const series = models.map((model) => {
       const data = strategies.map((strat) => {
@@ -134,119 +137,87 @@ export default function BenchmarkChart(props: Props) {
 
       return {
         name: model.displayName,
-        type: "line" as const,
         data,
-        smooth: false,
-        symbol: "circle",
-        symbolSize: 8,
-        lineStyle: {
-          width: 2,
-          color: modelColorMap().get(model.id),
-        },
-        itemStyle: {
-          color: modelColorMap().get(model.id),
-        },
-        emphasis: {
-          focus: "series" as const,
-          itemStyle: {
-            borderWidth: 2,
-            borderColor: "#fff",
-          },
-        },
       };
     });
 
     return {
-      backgroundColor: "transparent",
-      grid: {
-        left: 60,
-        right: 20,
-        top: 20,
-        bottom: 40,
-      },
-      tooltip: {
-        trigger: "axis" as const,
-        backgroundColor: "rgba(255, 255, 255, 0.95)",
-        borderColor: "#ddd",
-        borderWidth: 1,
-        textStyle: {
-          color: "#333",
-        },
-        formatter: (params: { seriesName: string; value: number | null; color: string }[]) => {
-          if (!Array.isArray(params) || params.length === 0) return "";
-          const lines = params
-            .filter((p) => p.value !== null && p.value !== undefined)
-            .map(
-              (p) =>
-                `<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${p.color};margin-right:6px;"></span>${p.seriesName}: <strong>${metric.format(p.value)}</strong>`
-            );
-          return lines.join("<br/>");
-        },
-      },
-      xAxis: {
-        type: "category" as const,
-        data: strategies.map((s) => s.displayName),
-        axisLine: {
-          lineStyle: { color: "#ddd" },
-        },
-        axisTick: {
-          lineStyle: { color: "#ddd" },
-        },
-        axisLabel: {
-          color: "#666",
-        },
-      },
-      yAxis: {
-        type: "value" as const,
-        name: metric.label,
-        nameLocation: "middle" as const,
-        nameGap: 45,
-        nameTextStyle: {
-          color: "#666",
-        },
-        min: selectedMetric() === "score" ? 0 : undefined,
-        max: selectedMetric() === "score" ? 1 : undefined,
-        axisLine: {
+      chart: {
+        type: "line" as const,
+        height: 500,
+        toolbar: {
           show: false,
         },
-        axisTick: {
-          show: false,
+        zoom: {
+          enabled: false,
         },
-        axisLabel: {
-          color: "#666",
+        animations: {
+          enabled: false,
         },
-        splitLine: {
-          lineStyle: {
-            color: "#eee",
-          },
+      },
+      colors,
+      stroke: {
+        width: 2,
+        curve: "straight" as const,
+      },
+      markers: {
+        size: 5,
+        hover: {
+          size: 7,
         },
       },
       series,
+      xaxis: {
+        categories: strategies.map((s) => s.displayName),
+        title: {
+          text: "Strategy",
+        },
+      },
+      yaxis: {
+        title: {
+          text: metric.label,
+        },
+        min: metric.key === "score" || metric.key === "cacheHit" ? 0 : undefined,
+        max: metric.key === "score" || metric.key === "cacheHit" ? 1 : undefined,
+        labels: {
+          formatter: metric.yAxisFormat || ((v: number) => (typeof v === "number" ? v.toFixed(2) : v)),
+        },
+      },
+      tooltip: {
+        shared: true,
+        intersect: false,
+        y: {
+          formatter: (v: number) => (v !== null && v !== undefined ? metric.format(v) : "—"),
+        },
+      },
+      legend: {
+        show: false,
+      },
+      grid: {
+        borderColor: "#e5e5e5",
+      },
     };
+  };
+
+  onMount(async () => {
+    const ApexCharts = (await import("apexcharts")).default;
+    if (chartContainer) {
+      chartInstance = new ApexCharts(chartContainer, getChartOptions());
+      chartInstance.render();
+    }
   });
 
-  onMount(() => {
-    if (!containerRef) return;
-
-    chartInstance = echarts.init(containerRef);
-    chartInstance.setOption(chartOption());
-
-    const resizeObserver = new ResizeObserver(() => {
-      chartInstance?.resize();
-    });
-    resizeObserver.observe(containerRef);
-
-    onCleanup(() => {
-      resizeObserver.disconnect();
-      chartInstance?.dispose();
+  onCleanup(() => {
+    if (chartInstance) {
+      chartInstance.destroy();
       chartInstance = null;
-    });
+    }
   });
 
   createEffect(() => {
-    const option = chartOption();
+    const options = getChartOptions();
     if (chartInstance) {
-      chartInstance.setOption(option, { notMerge: true });
+      chartInstance.updateOptions(options);
     }
   });
 
@@ -293,13 +264,15 @@ export default function BenchmarkChart(props: Props) {
       </div>
 
       <div
-        ref={containerRef}
         style={{
-          height: "500px",
           background: "#fafafa",
           "border-radius": "8px",
+          padding: "16px",
+          "min-height": "532px",
         }}
-      />
+      >
+        <div ref={chartContainer}></div>
+      </div>
 
       <div
         style={{
@@ -310,7 +283,9 @@ export default function BenchmarkChart(props: Props) {
           "align-items": "center",
         }}
       >
-        <span style={{ "font-size": "12px", color: "#666", "margin-right": "4px" }}>Models:</span>
+        <span style={{ "font-size": "12px", color: "#666", "margin-right": "4px" }}>
+          Models:
+        </span>
         <For each={sortedModels()}>
           {(model) => (
             <button
@@ -335,7 +310,7 @@ export default function BenchmarkChart(props: Props) {
                   "border-radius": "2px",
                   background: modelColorMap().get(model.id),
                 }}
-              />
+              ></span>
               {model.displayName}
             </button>
           )}
