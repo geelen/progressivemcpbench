@@ -37,7 +37,7 @@ async function getFileMtime(filePath: string): Promise<number> {
 }
 
 interface RunWithMtime extends RunSummary {
-  mtime: number;
+  _mtime: number; // internal tracking, not persisted
 }
 
 interface UpdateOptions {
@@ -62,8 +62,8 @@ async function updateReport(options: UpdateOptions): Promise<void> {
   if (existingReport && !full) {
     for (const run of existingReport.runs) {
       const comboKey = `${run.modelId}::${run.strategyId}`;
-      // Use 0 as mtime for existing runs (any new log will be newer)
-      latestByCombo.set(comboKey, { ...run, mtime: 0 });
+      // Use 0 as _mtime for existing runs (any new log will be newer)
+      latestByCombo.set(comboKey, { ...run, _mtime: 0 });
     }
   }
 
@@ -73,28 +73,37 @@ async function updateReport(options: UpdateOptions): Promise<void> {
   
   let newCount = 0;
   let updatedCount = 0;
+  let skippedUnknown = 0;
 
   for (const run of allRuns) {
     run.strategyId = extractStrategyFromPath(run.logPath);
+    
+    // Skip runs with unknown strategy
+    if (run.strategyId === "unknown") {
+      skippedUnknown++;
+      console.log(`  Skipping unknown strategy: ${run.logPath}`);
+      continue;
+    }
+    
     run.id = generateRunId(run);
     
     const mtime = await getFileMtime(run.logPath);
     const comboKey = `${run.modelId}::${run.strategyId}`;
     
     const existing = latestByCombo.get(comboKey);
-    if (!existing || mtime > existing.mtime) {
+    if (!existing || mtime > existing._mtime) {
       if (existing) {
         updatedCount++;
       } else {
         newCount++;
       }
-      latestByCombo.set(comboKey, { ...run, mtime });
+      latestByCombo.set(comboKey, { ...run, _mtime: mtime });
     }
   }
 
-  // Strip mtime from final output
+  // Strip _mtime from final output
   const finalRuns: RunSummary[] = Array.from(latestByCombo.values()).map(
-    ({ mtime, ...run }) => run
+    ({ _mtime, ...run }) => run
   );
 
   const report: ReportJson = {

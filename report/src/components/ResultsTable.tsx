@@ -28,6 +28,23 @@ function formatPercent(value: number | null): string {
   return `${(value * 100).toFixed(1)}%`;
 }
 
+function formatRelativeTime(isoDate: string): string {
+  const date = new Date(isoDate);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffMins < 1) return "just now";
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays === 1) return "yesterday";
+  if (diffDays < 7) return `${diffDays}d ago`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
+  return date.toLocaleDateString();
+}
+
 function formatScore(value: number | null): string {
   if (value === null) return "—";
   return value.toFixed(3);
@@ -83,6 +100,7 @@ export default function ResultsTable(props: Props) {
             <tr style={{ "background-color": "#f5f5f5" }}>
               <th style={{ padding: "8px 12px", "text-align": "left", "border-bottom": "2px solid #ddd" }}>Model</th>
               <th style={{ padding: "8px 12px", "text-align": "left", "border-bottom": "2px solid #ddd" }}>Strategy</th>
+              <th style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "2px solid #ddd" }}>Run</th>
               <th style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "2px solid #ddd" }}>Samples</th>
               <th style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "2px solid #ddd" }}>Score</th>
               <th style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "2px solid #ddd" }}>Time (mean)</th>
@@ -102,6 +120,7 @@ export default function ResultsTable(props: Props) {
                 >
                   <td style={{ padding: "8px 12px", "border-bottom": "1px solid #eee" }}>{getModelName(run.modelId)}</td>
                   <td style={{ padding: "8px 12px", "border-bottom": "1px solid #eee" }}>{getStrategyName(run.strategyId)}</td>
+                  <td style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "1px solid #eee", color: "#888" }}>{formatRelativeTime(run.runAt)}</td>
                   <td style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "1px solid #eee" }}>{run.sampleCount}</td>
                   <td style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "1px solid #eee" }}>{formatScore(run.score.mean)}</td>
                   <td style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "1px solid #eee" }}>{formatTime(run.time.totalMean)}</td>

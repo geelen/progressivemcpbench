@@ -35,6 +35,7 @@ export interface RunSummary {
   strategyId: string;
   task: string | null;
   sampleCount: number;
+  runAt: string; // ISO timestamp of when the benchmark was run
 
   score: {
     mean: number | null;

@@ -26,6 +26,7 @@ export interface RunSummary {
   strategyId: string;
   task: string | null;
   sampleCount: number;
+  runAt: string;
 
   score: {
     mean: number | null;

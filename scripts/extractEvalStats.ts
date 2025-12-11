@@ -349,8 +349,9 @@ async function findLogFiles(logPath: string): Promise<string[]> {
   return logFiles.sort();
 }
 
-export function aggregateStats(evalStats: EvalStats): RunSummary {
+export function aggregateStats(evalStats: EvalStats, mtime?: number): RunSummary {
   const samples = evalStats.sampleStats;
+  const runAt = mtime ? new Date(mtime).toISOString() : new Date().toISOString();
 
   if (samples.length === 0) {
     return {
@@ -360,6 +361,7 @@ export function aggregateStats(evalStats: EvalStats): RunSummary {
       strategyId: "unknown",
       task: evalStats.task,
       sampleCount: 0,
+      runAt,
       score: { mean: null, min: null, max: null },
       time: {
         totalSum: null,
@@ -438,6 +440,7 @@ export function aggregateStats(evalStats: EvalStats): RunSummary {
     strategyId: "unknown",
     task: evalStats.task,
     sampleCount: samples.length,
+    runAt,
     score: {
       mean: mean(scores),
       min: scores.length > 0 ? Math.min(...scores) : null,
@@ -510,6 +513,7 @@ export async function extractEvalStats(options: ExtractOptions): Promise<RunSumm
   for (const logFile of logFiles) {
     console.log(`Processing ${logFile}`);
 
+    const fileStat = await stat(logFile);
     let evalStats: EvalStats;
     if (logFile.endsWith(".eval")) {
       evalStats = await parseEvalFile(logFile);
@@ -518,7 +522,7 @@ export async function extractEvalStats(options: ExtractOptions): Promise<RunSumm
     }
 
     if (evalStats.numSamples >= minSamples) {
-      const runSummary = aggregateStats(evalStats);
+      const runSummary = aggregateStats(evalStats, fileStat.mtimeMs);
       runs.push(runSummary);
     } else {
       console.log(`  Skipping: only ${evalStats.numSamples} samples (min: ${minSamples})`);
