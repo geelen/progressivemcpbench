@@ -1,8 +1,6 @@
-import { createSignal, createMemo, onMount, onCleanup, For } from "solid-js";
-import { Chart, registerables } from "chart.js";
+import { createSignal, createMemo, createEffect, onMount, onCleanup, For } from "solid-js";
+import * as echarts from "echarts";
 import type { RunSummary, ModelConfig, StrategyConfig } from "../types/report";
-
-Chart.register(...registerables);
 
 interface Props {
   runs: RunSummary[];
@@ -17,21 +15,22 @@ interface MetricDef {
   label: string;
   getValue: (run: RunSummary) => number | null;
   format: (v: number | null) => string;
+  unit?: string;
 }
 
 const MODEL_COLORS = [
-  "#2563eb", // blue
-  "#dc2626", // red
-  "#16a34a", // green
-  "#ca8a04", // yellow
-  "#9333ea", // purple
-  "#ea580c", // orange
-  "#0891b2", // cyan
-  "#be185d", // pink
-  "#4f46e5", // indigo
-  "#059669", // emerald
-  "#7c3aed", // violet
-  "#d97706", // amber
+  "#2563eb",
+  "#dc2626",
+  "#16a34a",
+  "#ca8a04",
+  "#9333ea",
+  "#ea580c",
+  "#0891b2",
+  "#be185d",
+  "#4f46e5",
+  "#059669",
+  "#7c3aed",
+  "#d97706",
 ];
 
 const METRICS: MetricDef[] = [
@@ -51,6 +50,7 @@ const METRICS: MetricDef[] = [
       if (v < 60) return `${v.toFixed(1)}s`;
       return `${(v / 60).toFixed(1)}m`;
     },
+    unit: "s",
   },
   {
     key: "totalTokens",
@@ -78,14 +78,15 @@ const METRICS: MetricDef[] = [
   {
     key: "cacheHit",
     label: "Cache Hit Rate",
-    getValue: (r) => r.cache.openaiHitRate,
-    format: (v) => (v === null ? "—" : `${(v * 100).toFixed(1)}%`),
+    getValue: (r) => (r.cache.openaiHitRate !== null ? r.cache.openaiHitRate * 100 : null),
+    format: (v) => (v === null ? "—" : `${v.toFixed(1)}%`),
+    unit: "%",
   },
 ];
 
 export default function BenchmarkChart(props: Props) {
-  let canvasRef: HTMLCanvasElement | undefined;
-  let chartInstance: Chart | null = null;
+  let containerRef: HTMLDivElement | undefined;
+  let chartInstance: echarts.ECharts | null = null;
 
   const [selectedMetric, setSelectedMetric] = createSignal<MetricKey>("score");
   const [hiddenModels, setHiddenModels] = createSignal<Set<string>>(new Set());
@@ -118,104 +119,135 @@ export default function BenchmarkChart(props: Props) {
     return METRICS.find((m) => m.key === selectedMetric())!;
   });
 
-  const chartData = createMemo(() => {
+  const chartOption = createMemo(() => {
     const strategies = sortedStrategies();
     const models = sortedModels().filter((m) => !hiddenModels().has(m.id));
     const runMap = runsByModelStrategy();
+    const metric = currentMetric();
 
-    const labels = strategies.map((s) => s.displayName);
-
-    const datasets = models.map((model) => {
+    const series = models.map((model) => {
       const data = strategies.map((strat) => {
         const run = runMap.get(`${model.id}::${strat.id}`);
         if (!run) return null;
-        return currentMetric().getValue(run);
+        return metric.getValue(run);
       });
 
       return {
-        label: model.displayName,
+        name: model.displayName,
+        type: "line" as const,
         data,
-        borderColor: modelColorMap().get(model.id),
-        backgroundColor: modelColorMap().get(model.id),
-        tension: 0.1,
-        pointRadius: 5,
-        pointHoverRadius: 7,
+        smooth: false,
+        symbol: "circle",
+        symbolSize: 8,
+        lineStyle: {
+          width: 2,
+          color: modelColorMap().get(model.id),
+        },
+        itemStyle: {
+          color: modelColorMap().get(model.id),
+        },
+        emphasis: {
+          focus: "series" as const,
+          itemStyle: {
+            borderWidth: 2,
+            borderColor: "#fff",
+          },
+        },
       };
     });
 
-    return { labels, datasets };
+    return {
+      backgroundColor: "transparent",
+      grid: {
+        left: 60,
+        right: 20,
+        top: 20,
+        bottom: 40,
+      },
+      tooltip: {
+        trigger: "axis" as const,
+        backgroundColor: "rgba(255, 255, 255, 0.95)",
+        borderColor: "#ddd",
+        borderWidth: 1,
+        textStyle: {
+          color: "#333",
+        },
+        formatter: (params: { seriesName: string; value: number | null; color: string }[]) => {
+          if (!Array.isArray(params) || params.length === 0) return "";
+          const lines = params
+            .filter((p) => p.value !== null && p.value !== undefined)
+            .map(
+              (p) =>
+                `<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${p.color};margin-right:6px;"></span>${p.seriesName}: <strong>${metric.format(p.value)}</strong>`
+            );
+          return lines.join("<br/>");
+        },
+      },
+      xAxis: {
+        type: "category" as const,
+        data: strategies.map((s) => s.displayName),
+        axisLine: {
+          lineStyle: { color: "#ddd" },
+        },
+        axisTick: {
+          lineStyle: { color: "#ddd" },
+        },
+        axisLabel: {
+          color: "#666",
+        },
+      },
+      yAxis: {
+        type: "value" as const,
+        name: metric.label,
+        nameLocation: "middle" as const,
+        nameGap: 45,
+        nameTextStyle: {
+          color: "#666",
+        },
+        min: selectedMetric() === "score" ? 0 : undefined,
+        max: selectedMetric() === "score" ? 1 : undefined,
+        axisLine: {
+          show: false,
+        },
+        axisTick: {
+          show: false,
+        },
+        axisLabel: {
+          color: "#666",
+        },
+        splitLine: {
+          lineStyle: {
+            color: "#eee",
+          },
+        },
+      },
+      series,
+    };
   });
 
-  const updateChart = () => {
-    if (!chartInstance) return;
-    const data = chartData();
-    chartInstance.data.labels = data.labels;
-    chartInstance.data.datasets = data.datasets;
-    chartInstance.options.scales!.y!.title!.text = currentMetric().label;
-    chartInstance.update();
-  };
-
   onMount(() => {
-    if (!canvasRef) return;
+    if (!containerRef) return;
 
-    const data = chartData();
+    chartInstance = echarts.init(containerRef);
+    chartInstance.setOption(chartOption());
 
-    chartInstance = new Chart(canvasRef, {
-      type: "line",
-      data: {
-        labels: data.labels,
-        datasets: data.datasets,
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-          mode: "index",
-          intersect: false,
-        },
-        plugins: {
-          legend: {
-            display: false,
-          },
-          tooltip: {
-            callbacks: {
-              label: (ctx) => {
-                const value = ctx.parsed.y;
-                return `${ctx.dataset.label}: ${currentMetric().format(value)}`;
-              },
-            },
-          },
-        },
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: "Strategy",
-            },
-          },
-          y: {
-            title: {
-              display: true,
-              text: currentMetric().label,
-            },
-            beginAtZero: selectedMetric() === "score",
-          },
-        },
-      },
+    const resizeObserver = new ResizeObserver(() => {
+      chartInstance?.resize();
+    });
+    resizeObserver.observe(containerRef);
+
+    onCleanup(() => {
+      resizeObserver.disconnect();
+      chartInstance?.dispose();
+      chartInstance = null;
     });
   });
 
-  onCleanup(() => {
+  createEffect(() => {
+    const option = chartOption();
     if (chartInstance) {
-      chartInstance.destroy();
-      chartInstance = null;
+      chartInstance.setOption(option, { notMerge: true });
     }
-  });
-
-  createMemo(() => {
-    chartData();
-    currentMetric();
-    updateChart();
   });
 
   const toggleModel = (modelId: string) => {
@@ -261,15 +293,13 @@ export default function BenchmarkChart(props: Props) {
       </div>
 
       <div
+        ref={containerRef}
         style={{
           height: "500px",
           background: "#fafafa",
           "border-radius": "8px",
-          padding: "16px",
         }}
-      >
-        <canvas ref={canvasRef}></canvas>
-      </div>
+      />
 
       <div
         style={{
@@ -280,9 +310,7 @@ export default function BenchmarkChart(props: Props) {
           "align-items": "center",
         }}
       >
-        <span style={{ "font-size": "12px", color: "#666", "margin-right": "4px" }}>
-          Models:
-        </span>
+        <span style={{ "font-size": "12px", color: "#666", "margin-right": "4px" }}>Models:</span>
         <For each={sortedModels()}>
           {(model) => (
             <button
@@ -307,7 +335,7 @@ export default function BenchmarkChart(props: Props) {
                   "border-radius": "2px",
                   background: modelColorMap().get(model.id),
                 }}
-              ></span>
+              />
               {model.displayName}
             </button>
           )}
