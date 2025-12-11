@@ -1,14 +1,10 @@
 #!/usr/bin/env node
-import { readFile, writeFile, mkdir, stat } from "fs/promises";
-import { dirname, basename, extname, relative } from "path";
+import { writeFile, mkdir, stat } from "fs/promises";
+import { dirname, basename, extname } from "path";
 import { parseArgs } from "util";
 import { MODELS, STRATEGIES } from "./benchConfig";
 import { METRICS, type ReportJson, type RunSummary } from "./types/report";
-import { extractEvalStats, parseLogFile, aggregateStats } from "./extractEvalStats";
-
-interface ReportIndex {
-  files: Record<string, { mtimeMs: number; runId: string }>;
-}
+import { extractEvalStats } from "./extractEvalStats";
 
 function extractStrategyFromPath(logPath: string): string {
   const filename = basename(logPath, extname(logPath));
@@ -23,30 +19,7 @@ function extractStrategyFromPath(logPath: string): string {
 }
 
 function generateRunId(run: RunSummary): string {
-  return `${run.modelId}__${run.strategyId}__${basename(run.logPath, extname(run.logPath))}`;
-}
-
-async function loadExistingReport(reportPath: string): Promise<ReportJson | null> {
-  try {
-    const content = await readFile(reportPath, "utf-8");
-    return JSON.parse(content);
-  } catch {
-    return null;
-  }
-}
-
-async function loadReportIndex(indexPath: string): Promise<ReportIndex> {
-  try {
-    const content = await readFile(indexPath, "utf-8");
-    return JSON.parse(content);
-  } catch {
-    return { files: {} };
-  }
-}
-
-async function saveReportIndex(indexPath: string, index: ReportIndex): Promise<void> {
-  await mkdir(dirname(indexPath), { recursive: true });
-  await writeFile(indexPath, JSON.stringify(index, null, 2));
+  return `${run.modelId}__${run.strategyId}`;
 }
 
 async function getFileMtime(filePath: string): Promise<number> {
@@ -54,62 +27,41 @@ async function getFileMtime(filePath: string): Promise<number> {
   return fileStat.mtimeMs;
 }
 
+interface RunWithMtime extends RunSummary {
+  mtime: number;
+}
+
 interface UpdateOptions {
   logsDir: string;
   outputPath: string;
-  clean?: boolean;
   minSamples?: number;
 }
 
 async function updateReport(options: UpdateOptions): Promise<void> {
-  const { logsDir, outputPath, clean = false, minSamples = 1 } = options;
-  const indexPath = outputPath.replace(/\.json$/, ".index.json");
-
-  let existingReport: ReportJson | null = null;
-  let index: ReportIndex = { files: {} };
-
-  if (!clean) {
-    existingReport = await loadExistingReport(outputPath);
-    index = await loadReportIndex(indexPath);
-  }
-
-  const existingRunsById = new Map<string, RunSummary>();
-  if (existingReport) {
-    for (const run of existingReport.runs) {
-      existingRunsById.set(run.id, run);
-    }
-  }
+  const { logsDir, outputPath, minSamples = 2 } = options;
 
   const allRuns = await extractEvalStats({ logsDir, minSamples });
-  let newRunsCount = 0;
-  let updatedRunsCount = 0;
+  
+  // Key: "modelId::strategyId" -> most recent run
+  const latestByCombo = new Map<string, RunWithMtime>();
 
   for (const run of allRuns) {
     run.strategyId = extractStrategyFromPath(run.logPath);
     run.id = generateRunId(run);
-
-    const relativePath = relative(logsDir, run.logPath);
+    
     const mtime = await getFileMtime(run.logPath);
-    const existingEntry = index.files[relativePath];
-
-    if (!clean && existingEntry && existingEntry.mtimeMs === mtime) {
-      const existingRun = existingRunsById.get(existingEntry.runId);
-      if (existingRun) {
-        continue;
-      }
+    const comboKey = `${run.modelId}::${run.strategyId}`;
+    
+    const existing = latestByCombo.get(comboKey);
+    if (!existing || mtime > existing.mtime) {
+      latestByCombo.set(comboKey, { ...run, mtime });
     }
-
-    if (existingRunsById.has(run.id)) {
-      updatedRunsCount++;
-    } else {
-      newRunsCount++;
-    }
-
-    existingRunsById.set(run.id, run);
-    index.files[relativePath] = { mtimeMs: mtime, runId: run.id };
   }
 
-  const finalRuns = Array.from(existingRunsById.values());
+  // Strip mtime from final output
+  const finalRuns: RunSummary[] = Array.from(latestByCombo.values()).map(
+    ({ mtime, ...run }) => run
+  );
 
   const report: ReportJson = {
     generatedAt: new Date().toISOString(),
@@ -124,12 +76,10 @@ async function updateReport(options: UpdateOptions): Promise<void> {
 
   await mkdir(dirname(outputPath), { recursive: true });
   await writeFile(outputPath, JSON.stringify(report, null, 2));
-  await saveReportIndex(indexPath, index);
 
   console.log(`Report updated: ${outputPath}`);
-  console.log(`  Total runs: ${finalRuns.length}`);
-  console.log(`  New runs: ${newRunsCount}`);
-  console.log(`  Updated runs: ${updatedRunsCount}`);
+  console.log(`  Model/strategy combos: ${finalRuns.length}`);
+  console.log(`  Expected max: ${MODELS.length * STRATEGIES.length}`);
 }
 
 async function main(): Promise<void> {
@@ -137,8 +87,7 @@ async function main(): Promise<void> {
     options: {
       logs: { type: "string", short: "l" },
       output: { type: "string", short: "o" },
-      clean: { type: "boolean", default: false },
-      "min-samples": { type: "string", default: "1" },
+      "min-samples": { type: "string", default: "2" },
       help: { type: "boolean", short: "h" },
     },
   });
@@ -150,8 +99,7 @@ Usage: bun run updateReport.ts [options]
 Options:
   -l, --logs <path>        Path to OpenBench logs directory
   -o, --output <path>      Output path for report.json (default: ../data/reports/report.json)
-  --clean                  Force regeneration of entire report (ignore existing)
-  --min-samples <n>        Minimum samples required for a valid run (default: 1)
+  --min-samples <n>        Minimum samples required for a valid run (default: 2)
   -h, --help               Show this help message
 `);
     process.exit(0);
@@ -169,7 +117,6 @@ Options:
   await updateReport({
     logsDir,
     outputPath,
-    clean: values.clean,
     minSamples,
   });
 }
