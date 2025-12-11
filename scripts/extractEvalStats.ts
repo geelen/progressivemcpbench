@@ -486,13 +486,24 @@ export function aggregateStats(evalStats: EvalStats): RunSummary {
 export interface ExtractOptions {
   logsDir: string;
   minSamples?: number;
+  sinceTimestamp?: number;
 }
 
 export async function extractEvalStats(options: ExtractOptions): Promise<RunSummary[]> {
-  const { logsDir, minSamples = 1 } = options;
+  const { logsDir, minSamples = 1, sinceTimestamp = 0 } = options;
 
-  const logFiles = await findLogFiles(logsDir);
-  console.log(`Found ${logFiles.length} log file(s)`);
+  const allLogFiles = await findLogFiles(logsDir);
+  
+  // Filter to only logs newer than sinceTimestamp
+  const logFiles: string[] = [];
+  for (const logFile of allLogFiles) {
+    const fileStat = await stat(logFile);
+    if (fileStat.mtimeMs > sinceTimestamp) {
+      logFiles.push(logFile);
+    }
+  }
+  
+  console.log(`Found ${logFiles.length} log file(s) to process (of ${allLogFiles.length} total)`);
 
   const runs: RunSummary[] = [];
 

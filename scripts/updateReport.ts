@@ -1,10 +1,19 @@
 #!/usr/bin/env node
-import { writeFile, mkdir, stat } from "fs/promises";
+import { readFile, writeFile, mkdir, stat } from "fs/promises";
 import { dirname, basename, extname } from "path";
 import { parseArgs } from "util";
 import { MODELS, STRATEGIES } from "./benchConfig";
 import { METRICS, type ReportJson, type RunSummary } from "./types/report";
 import { extractEvalStats } from "./extractEvalStats";
+
+async function loadExistingReport(reportPath: string): Promise<ReportJson | null> {
+  try {
+    const content = await readFile(reportPath, "utf-8");
+    return JSON.parse(content);
+  } catch {
+    return null;
+  }
+}
 
 function extractStrategyFromPath(logPath: string): string {
   const filename = basename(logPath, extname(logPath));
@@ -35,15 +44,35 @@ interface UpdateOptions {
   logsDir: string;
   outputPath: string;
   minSamples?: number;
+  full?: boolean;
 }
 
 async function updateReport(options: UpdateOptions): Promise<void> {
-  const { logsDir, outputPath, minSamples = 2 } = options;
+  const { logsDir, outputPath, minSamples = 2, full = false } = options;
 
-  const allRuns = await extractEvalStats({ logsDir, minSamples });
-  
-  // Key: "modelId::strategyId" -> most recent run
+  // Load existing report to get timestamp and existing runs
+  const existingReport = await loadExistingReport(outputPath);
+  const lastGeneratedAt = existingReport?.generatedAt 
+    ? new Date(existingReport.generatedAt).getTime() 
+    : 0;
+
+  // Start with existing runs (keyed by model::strategy)
   const latestByCombo = new Map<string, RunWithMtime>();
+  
+  if (existingReport && !full) {
+    for (const run of existingReport.runs) {
+      const comboKey = `${run.modelId}::${run.strategyId}`;
+      // Use 0 as mtime for existing runs (any new log will be newer)
+      latestByCombo.set(comboKey, { ...run, mtime: 0 });
+    }
+  }
+
+  // Only process logs newer than last report (unless --full)
+  const sinceTimestamp = full ? 0 : lastGeneratedAt;
+  const allRuns = await extractEvalStats({ logsDir, minSamples, sinceTimestamp });
+  
+  let newCount = 0;
+  let updatedCount = 0;
 
   for (const run of allRuns) {
     run.strategyId = extractStrategyFromPath(run.logPath);
@@ -54,6 +83,11 @@ async function updateReport(options: UpdateOptions): Promise<void> {
     
     const existing = latestByCombo.get(comboKey);
     if (!existing || mtime > existing.mtime) {
+      if (existing) {
+        updatedCount++;
+      } else {
+        newCount++;
+      }
       latestByCombo.set(comboKey, { ...run, mtime });
     }
   }
@@ -78,8 +112,11 @@ async function updateReport(options: UpdateOptions): Promise<void> {
   await writeFile(outputPath, JSON.stringify(report, null, 2));
 
   console.log(`Report updated: ${outputPath}`);
-  console.log(`  Model/strategy combos: ${finalRuns.length}`);
-  console.log(`  Expected max: ${MODELS.length * STRATEGIES.length}`);
+  console.log(`  Total combos: ${finalRuns.length} / ${MODELS.length * STRATEGIES.length}`);
+  if (!full && existingReport) {
+    console.log(`  New: ${newCount}, Updated: ${updatedCount}`);
+    console.log(`  (Only processed logs newer than ${existingReport.generatedAt})`);
+  }
 }
 
 async function main(): Promise<void> {
@@ -87,6 +124,7 @@ async function main(): Promise<void> {
     options: {
       logs: { type: "string", short: "l" },
       output: { type: "string", short: "o" },
+      full: { type: "boolean", default: false },
       "min-samples": { type: "string", default: "2" },
       help: { type: "boolean", short: "h" },
     },
@@ -99,6 +137,7 @@ Usage: bun run updateReport.ts [options]
 Options:
   -l, --logs <path>        Path to OpenBench logs directory
   -o, --output <path>      Output path for report.json (default: ../data/reports/report.json)
+  --full                   Reprocess all logs (ignore existing report timestamp)
   --min-samples <n>        Minimum samples required for a valid run (default: 2)
   -h, --help               Show this help message
 `);
@@ -118,6 +157,7 @@ Options:
     logsDir,
     outputPath,
     minSamples,
+    full: values.full,
   });
 }
 
