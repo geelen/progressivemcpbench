@@ -3,12 +3,15 @@ import { spawn } from "child_process";
 import { parseArgs } from "util";
 import { MODELS, STRATEGIES, EPOCHS } from "./benchConfig";
 
-function runCommand(cmd: string, args: string[]): Promise<number> {
+const DEFAULT_OPENBENCH_DIR = process.env.OPENBENCH_DIR || "../openbench";
+
+function runCommand(cmd: string, cwd: string): Promise<number> {
   return new Promise((resolve, reject) => {
-    console.log(`> ${cmd} ${args.join(" ")}`);
-    const proc = spawn(cmd, args, {
+    console.log(`> ${cmd}`);
+    const proc = spawn(cmd, [], {
       stdio: "inherit",
       shell: true,
+      cwd,
     });
 
     proc.on("close", (code) => {
@@ -26,6 +29,7 @@ interface RunOptions {
   strategies?: string[];
   epochs?: number;
   dryRun?: boolean;
+  openbenchDir: string;
 }
 
 async function runFullBench(options: RunOptions): Promise<void> {
@@ -34,9 +38,11 @@ async function runFullBench(options: RunOptions): Promise<void> {
     strategies = STRATEGIES.map((s) => s.id),
     epochs = EPOCHS,
     dryRun = false,
+    openbenchDir,
   } = options;
 
   console.log("=== Progressive MCP Bench Full Run ===");
+  console.log(`OpenBench dir: ${openbenchDir}`);
   console.log(`Models: ${models.length}`);
   console.log(`Strategies: ${strategies.length}`);
   console.log(`Epochs: ${epochs}`);
@@ -49,24 +55,12 @@ async function runFullBench(options: RunOptions): Promise<void> {
     for (const strategy of strategies) {
       console.log(`--- Strategy: ${strategy} ---`);
 
-      const args = [
-        "eval",
-        "progressivemcpbench",
-        "--model",
-        model,
-        "--alpha",
-        "--epochs",
-        epochs.toString(),
-        "--epochs-reducer",
-        "mean",
-        "-T",
-        `strategy=${strategy}`,
-      ];
+      const cmd = `uv run bench eval progressivemcpbench --model "${model}" --alpha --epochs ${epochs} --epochs-reducer mean -T strategy=${strategy}`;
 
       if (dryRun) {
-        console.log(`[DRY RUN] bench ${args.join(" ")}`);
+        console.log(`[DRY RUN] ${cmd}`);
       } else {
-        const exitCode = await runCommand("bench", args);
+        const exitCode = await runCommand(cmd, openbenchDir);
         if (exitCode !== 0) {
           console.error(`Warning: bench exited with code ${exitCode}`);
         }
@@ -83,6 +77,7 @@ async function main(): Promise<void> {
       model: { type: "string", short: "m", multiple: true },
       strategy: { type: "string", short: "s", multiple: true },
       epochs: { type: "string", short: "e" },
+      openbench: { type: "string", short: "o" },
       "dry-run": { type: "boolean", default: false },
       list: { type: "boolean" },
       help: { type: "boolean", short: "h" },
@@ -97,11 +92,13 @@ Options:
   -m, --model <id>       Run only specific model(s) (can be repeated)
   -s, --strategy <id>    Run only specific strategy(s) (can be repeated)
   -e, --epochs <n>       Number of epochs (default: ${EPOCHS})
+  -o, --openbench <dir>  Path to openbench directory (default: ../openbench or OPENBENCH_DIR)
   --dry-run              Print commands without executing
   --list                 List all configured models and strategies
   -h, --help             Show this help message
 
 Environment:
+  OPENBENCH_DIR          Path to openbench directory
   OPENAI_API_KEY         Required for running benchmarks
 `);
     process.exit(0);
@@ -124,6 +121,7 @@ Environment:
     process.exit(1);
   }
 
+  const openbenchDir = values.openbench || DEFAULT_OPENBENCH_DIR;
   const models = values.model?.length ? values.model : undefined;
   const strategies = values.strategy?.length ? values.strategy : undefined;
   const epochs = values.epochs ? parseInt(values.epochs, 10) : undefined;
@@ -133,6 +131,7 @@ Environment:
     strategies,
     epochs,
     dryRun: values["dry-run"],
+    openbenchDir,
   });
 }
 
