@@ -1,4 +1,4 @@
-import { For, Show, createMemo } from "solid-js";
+import { For, Show, createSignal, createMemo } from "solid-js";
 import type { RunSummary, ModelConfig, StrategyConfig } from "../types/report";
 
 interface Props {
@@ -51,6 +51,9 @@ function formatScore(value: number | null): string {
 }
 
 export default function ResultsTable(props: Props) {
+  const [selectedRuns, setSelectedRuns] = createSignal<Set<string>>(new Set());
+  const [copied, setCopied] = createSignal(false);
+
   const modelMap = createMemo(() => {
     const map = new Map<string, ModelConfig>();
     for (const m of props.models) map.set(m.id, m);
@@ -77,6 +80,56 @@ export default function ResultsTable(props: Props) {
     });
   });
 
+  const runsByModel = createMemo(() => {
+    const map = new Map<string, Set<string>>();
+    for (const run of props.runs) {
+      if (!map.has(run.modelId)) {
+        map.set(run.modelId, new Set());
+      }
+      map.get(run.modelId)!.add(run.strategyId);
+    }
+    return map;
+  });
+
+  const rerunCommand = createMemo(() => {
+    const selected = selectedRuns();
+    if (selected.size === 0) return null;
+
+    const selectedByModel = new Map<string, Set<string>>();
+    for (const runId of selected) {
+      const run = props.runs.find((r) => r.id === runId);
+      if (!run) continue;
+      if (!selectedByModel.has(run.modelId)) {
+        selectedByModel.set(run.modelId, new Set());
+      }
+      selectedByModel.get(run.modelId)!.add(run.strategyId);
+    }
+
+    const modelFlags: string[] = [];
+    const strategyFlags: string[] = [];
+    let allStrategiesForAllModels = true;
+
+    for (const [modelId, strategies] of selectedByModel) {
+      modelFlags.push(`-m "${modelId}"`);
+      const allStrategiesForModel = runsByModel().get(modelId);
+      if (!allStrategiesForModel || strategies.size !== allStrategiesForModel.size) {
+        allStrategiesForAllModels = false;
+        for (const s of strategies) {
+          if (!strategyFlags.includes(`-s "${s}"`)) {
+            strategyFlags.push(`-s "${s}"`);
+          }
+        }
+      }
+    }
+
+    let command = `bun run scripts/runFullBench.ts ${modelFlags.join(" ")}`;
+    if (!allStrategiesForAllModels && strategyFlags.length > 0) {
+      command += ` ${strategyFlags.join(" ")}`;
+    }
+
+    return command;
+  });
+
   const getModelName = (modelId: string): string => {
     return modelMap().get(modelId)?.displayName ?? modelId;
   };
@@ -84,6 +137,36 @@ export default function ResultsTable(props: Props) {
   const getStrategyName = (strategyId: string): string => {
     return strategyMap().get(strategyId)?.displayName ?? strategyId;
   };
+
+  const toggleRun = (runId: string) => {
+    setSelectedRuns((prev) => {
+      const next = new Set(prev);
+      if (next.has(runId)) {
+        next.delete(runId);
+      } else {
+        next.add(runId);
+      }
+      return next;
+    });
+  };
+
+  const clearSelection = () => {
+    setSelectedRuns(new Set());
+  };
+
+  const copyCommand = async () => {
+    const cmd = rerunCommand();
+    if (cmd) {
+      await navigator.clipboard.writeText(cmd);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const thStyle = { padding: "8px 12px", "text-align": "left" as const, "border-bottom": "2px solid #ddd" };
+  const thStyleRight = { ...thStyle, "text-align": "right" as const };
+  const tdStyle = { padding: "8px 12px", "border-bottom": "1px solid #eee" };
+  const tdStyleRight = { ...tdStyle, "text-align": "right" as const };
 
   return (
     <Show
@@ -94,46 +177,132 @@ export default function ResultsTable(props: Props) {
         </p>
       }
     >
-      <div style={{ "overflow-x": "auto" }}>
+      <div style={{ "overflow-x": "auto", "padding-bottom": selectedRuns().size > 0 ? "80px" : "0" }}>
         <table style={{ "border-collapse": "collapse", width: "100%", "font-size": "14px" }}>
           <thead>
             <tr style={{ "background-color": "#f5f5f5" }}>
-              <th style={{ padding: "8px 12px", "text-align": "left", "border-bottom": "2px solid #ddd" }}>Model</th>
-              <th style={{ padding: "8px 12px", "text-align": "left", "border-bottom": "2px solid #ddd" }}>Strategy</th>
-              <th style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "2px solid #ddd" }}>Run</th>
-              <th style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "2px solid #ddd" }}>Samples</th>
-              <th style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "2px solid #ddd" }}>Score</th>
-              <th style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "2px solid #ddd" }}>Time (mean)</th>
-              <th style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "2px solid #ddd" }}>Total Tokens</th>
-              <th style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "2px solid #ddd" }}>Model Calls</th>
-              <th style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "2px solid #ddd" }}>Tool Calls</th>
-              <th style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "2px solid #ddd" }}>Cache Hit</th>
+              <th style={{ ...thStyle, width: "40px", "text-align": "center" as const }}>
+                <span style={{ "font-size": "11px", color: "#888" }}>Rerun</span>
+              </th>
+              <th style={thStyle}>Model</th>
+              <th style={thStyle}>Strategy</th>
+              <th style={thStyleRight}>Run</th>
+              <th style={thStyleRight}>Samples</th>
+              <th style={thStyleRight}>Score</th>
+              <th style={thStyleRight}>Time (mean)</th>
+              <th style={thStyleRight}>Total Tokens</th>
+              <th style={thStyleRight}>Model Calls</th>
+              <th style={thStyleRight}>Tool Calls</th>
+              <th style={thStyleRight}>Cache Hit</th>
             </tr>
           </thead>
           <tbody>
             <For each={sortedRuns()}>
-              {(run, idx) => (
-                <tr
-                  style={{
-                    "background-color": idx() % 2 === 0 ? "#fff" : "#fafafa",
-                  }}
-                >
-                  <td style={{ padding: "8px 12px", "border-bottom": "1px solid #eee" }}>{getModelName(run.modelId)}</td>
-                  <td style={{ padding: "8px 12px", "border-bottom": "1px solid #eee" }}>{getStrategyName(run.strategyId)}</td>
-                  <td style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "1px solid #eee", color: "#888" }}>{formatRelativeTime(run.runAt)}</td>
-                  <td style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "1px solid #eee" }}>{run.sampleCount}</td>
-                  <td style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "1px solid #eee" }}>{formatScore(run.score.mean)}</td>
-                  <td style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "1px solid #eee" }}>{formatTime(run.time.totalMean)}</td>
-                  <td style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "1px solid #eee" }}>{formatTokens(run.tokens.totalSum)}</td>
-                  <td style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "1px solid #eee" }}>{run.calls.modelCalls}</td>
-                  <td style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "1px solid #eee" }}>{run.calls.toolCalls}</td>
-                  <td style={{ padding: "8px 12px", "text-align": "right", "border-bottom": "1px solid #eee" }}>{formatPercent(run.cache.openaiHitRate)}</td>
-                </tr>
-              )}
+              {(run, idx) => {
+                const isSelected = () => selectedRuns().has(run.id);
+                return (
+                  <tr
+                    style={{
+                      "background-color": isSelected()
+                        ? "#e8f4fd"
+                        : idx() % 2 === 0
+                          ? "#fff"
+                          : "#fafafa",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => toggleRun(run.id)}
+                  >
+                    <td style={{ ...tdStyle, "text-align": "center" as const }}>
+                      <input
+                        type="checkbox"
+                        checked={isSelected()}
+                        onChange={() => toggleRun(run.id)}
+                        onClick={(e) => e.stopPropagation()}
+                        style={{ cursor: "pointer" }}
+                      />
+                    </td>
+                    <td style={tdStyle}>{getModelName(run.modelId)}</td>
+                    <td style={tdStyle}>{getStrategyName(run.strategyId)}</td>
+                    <td style={{ ...tdStyleRight, color: "#888" }}>{formatRelativeTime(run.runAt)}</td>
+                    <td style={tdStyleRight}>{run.sampleCount}</td>
+                    <td style={tdStyleRight}>{formatScore(run.score.mean)}</td>
+                    <td style={tdStyleRight}>{formatTime(run.time.totalMean)}</td>
+                    <td style={tdStyleRight}>{formatTokens(run.tokens.totalSum)}</td>
+                    <td style={tdStyleRight}>{run.calls.modelCalls}</td>
+                    <td style={tdStyleRight}>{run.calls.toolCalls}</td>
+                    <td style={tdStyleRight}>{formatPercent(run.cache.openaiHitRate)}</td>
+                  </tr>
+                );
+              }}
             </For>
           </tbody>
         </table>
       </div>
+
+      <Show when={selectedRuns().size > 0}>
+        <div
+          style={{
+            position: "fixed",
+            bottom: "0",
+            left: "0",
+            right: "0",
+            background: "#1a1a1a",
+            color: "#fff",
+            padding: "12px 20px",
+            display: "flex",
+            "align-items": "center",
+            gap: "16px",
+            "box-shadow": "0 -4px 12px rgba(0,0,0,0.15)",
+            "z-index": "1000",
+          }}
+        >
+          <span style={{ "font-size": "13px", color: "#aaa" }}>
+            {selectedRuns().size} run{selectedRuns().size > 1 ? "s" : ""} selected
+          </span>
+          <code
+            style={{
+              flex: "1",
+              background: "#333",
+              padding: "8px 12px",
+              "border-radius": "4px",
+              "font-size": "13px",
+              "overflow-x": "auto",
+              "white-space": "nowrap",
+            }}
+          >
+            {rerunCommand()}
+          </code>
+          <button
+            onClick={copyCommand}
+            style={{
+              background: copied() ? "#16a34a" : "#2563eb",
+              color: "#fff",
+              border: "none",
+              padding: "8px 16px",
+              "border-radius": "4px",
+              cursor: "pointer",
+              "font-size": "13px",
+              "white-space": "nowrap",
+            }}
+          >
+            {copied() ? "Copied!" : "Copy"}
+          </button>
+          <button
+            onClick={clearSelection}
+            style={{
+              background: "transparent",
+              color: "#aaa",
+              border: "1px solid #555",
+              padding: "8px 12px",
+              "border-radius": "4px",
+              cursor: "pointer",
+              "font-size": "13px",
+            }}
+          >
+            Clear
+          </button>
+        </div>
+      </Show>
     </Show>
   );
 }
