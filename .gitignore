@@ -1,2 +1,16 @@
 node_modules/
 **/node_modules/
+
+# Build outputs
+report/dist/
+scripts/dist/
+
+# Report index (tracks processed files, regenerated)
+data/reports/*.index.json
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store

@@ -1,0 +1,21 @@
+{
+  "name": "@progressivemcpbench/scripts",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "update-report": "bun run updateReport.ts",
+    "full-bench": "bun run runFullBench.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.12.1",
+  "dependencies": {
+    "jszip": "^3.10.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.0",
+    "typescript": "^5.9.3"
+  }
+}

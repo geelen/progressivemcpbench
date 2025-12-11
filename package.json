@@ -1,10 +1,16 @@
 {
   "name": "progressivemcpbench",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Progressive MCP Benchmark",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "report:dev": "pnpm --filter report dev",
+    "report:build": "pnpm --filter report build",
+    "report:preview": "pnpm --filter report preview",
+    "report:update": "cd scripts && bun run updateReport.ts",
+    "bench:run": "cd scripts && bun run runFullBench.ts",
+    "bench:list": "cd scripts && bun run runFullBench.ts --list",
+    "typecheck": "pnpm --filter @progressivemcpbench/scripts typecheck"
   },
   "keywords": [],
   "author": "",
