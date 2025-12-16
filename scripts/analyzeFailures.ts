@@ -928,7 +928,27 @@ async function main(): Promise<void> {
           const causeGroups = new Map<string, { count: number; sampleIds: string[] }>();
           
           for (const f of failuresInCategory) {
-            const cause = f.errorMessages[0] || f.failureExplanation || "Unknown cause";
+            let cause = f.errorMessages[0] || f.failureExplanation || "Unknown cause";
+            
+            // Extract explanation from JSON if present
+            try {
+              const parsed = JSON.parse(cause);
+              if (parsed.explanation) {
+                cause = parsed.explanation;
+              }
+            } catch {
+              // Try to extract explanation from incomplete JSON
+              if (cause.includes('"explanation"')) {
+                const idx = cause.indexOf('"explanation"');
+                let extracted = cause.slice(idx + 13).replace(/^\s*:\s*"?/, '');
+                if (extracted.endsWith('"')) extracted = extracted.slice(0, -1);
+                if (extracted) cause = extracted;
+              }
+            }
+            
+            // Strip newlines and normalize whitespace
+            cause = cause.replace(/\s+/g, " ").trim();
+            
             const truncatedCause = cause.length > 120 ? cause.slice(0, 120) + "..." : cause;
             const existing = causeGroups.get(truncatedCause);
             if (existing) {
