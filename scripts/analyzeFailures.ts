@@ -339,10 +339,18 @@ function preCategorizeFailure(failure: FailedSample): boolean {
   const primaryError = failure.errorMessages[0] || "";
   
   // Tool call validation failures - model tried to call a tool that doesn't exist
-  const toolValidationMatch = primaryError.match(/attempted to call tool '([^']+)' which was not in request\.tools/);
-  if (toolValidationMatch) {
-    failure.failureCategory = "INVALID_TOOL_CALL";
-    failure.failureExplanation = `Model tried to call non-existent tool '${toolValidationMatch[1]}'`;
+  const toolNotFoundMatch = primaryError.match(/attempted to call tool '([^']+)' which was not in request\.tools/);
+  if (toolNotFoundMatch) {
+    failure.failureCategory = "INVALID_TOOL_NAME";
+    failure.failureExplanation = `Tool '${toolNotFoundMatch[1]}' does not exist`;
+    return true;
+  }
+  
+  // Tool call validation failures - model called tool with wrong parameters
+  const schemaMatch = primaryError.match(/parameters for tool (\S+) did not match schema/);
+  if (schemaMatch) {
+    failure.failureCategory = "INVALID_TOOL_ARGS";
+    failure.failureExplanation = `Wrong arguments for '${schemaMatch[1]}'`;
     return true;
   }
   
