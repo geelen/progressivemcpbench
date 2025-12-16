@@ -749,12 +749,8 @@ async function main(): Promise<void> {
           }
           
           const sortedCauses = [...causeGroups.entries()].sort((a, b) => b[1].count - a[1].count);
-          for (const [cause, { count: causeCount, sampleIds }] of sortedCauses) {
-            const samplePreview = sampleIds.length <= 3 
-              ? sampleIds.map(id => id.slice(0, 8)).join(", ")
-              : `${sampleIds.slice(0, 3).map(id => id.slice(0, 8)).join(", ")}...`;
-            console.log(`      ${causeCount}x: ${cause}`);
-            console.log(`         samples: ${samplePreview}`);
+          for (const [cause, { count: causeCount }] of sortedCauses) {
+            console.log(`      ${causeCount}x: \x1b[2m${cause}\x1b[0m`);
           }
         }
       }
