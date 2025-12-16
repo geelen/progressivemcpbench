@@ -69,7 +69,6 @@ interface FailureSummary {
   byCategory: Record<string, number>;
   byModel: Record<string, number>;
   byStrategy: Record<string, number>;
-  byTaskCategory: Record<string, number>;
 }
 
 interface RunAnalysis {
@@ -193,6 +192,12 @@ function parseSample(
     return { failed: null, passed: true };
   }
 
+  const errorMessages = extractErrorMessages(messages);
+  const metadataError = metadata.error_message as string | undefined;
+  if (metadataError) {
+    errorMessages.unshift(metadataError);
+  }
+
   return {
     passed: false,
     failed: {
@@ -206,7 +211,7 @@ function parseSample(
       target: (sample.target as string[]) || [],
       finalAnswer: extractFinalAnswer(messages),
       toolCallsMade: extractToolCalls(messages),
-      errorMessages: extractErrorMessages(messages),
+      errorMessages,
       timeout: checkTimeout(sample),
       score,
       category: (metadata.category as string) || null,
@@ -461,15 +466,12 @@ function generateSummary(failures: FailedSample[]): FailureSummary {
   const categoryCountsRaw: Record<string, number> = {};
   const modelCountsRaw: Record<string, number> = {};
   const strategyCountsRaw: Record<string, number> = {};
-  const taskCategoryCountsRaw: Record<string, number> = {};
 
   for (const f of failures) {
     const cat = f.failureCategory || "UNCATEGORIZED";
     categoryCountsRaw[cat] = (categoryCountsRaw[cat] || 0) + 1;
     modelCountsRaw[f.model] = (modelCountsRaw[f.model] || 0) + 1;
     strategyCountsRaw[f.strategy] = (strategyCountsRaw[f.strategy] || 0) + 1;
-    const tc = f.category || "Unknown";
-    taskCategoryCountsRaw[tc] = (taskCategoryCountsRaw[tc] || 0) + 1;
   }
 
   const sortByCount = (obj: Record<string, number>) =>
@@ -487,7 +489,6 @@ function generateSummary(failures: FailedSample[]): FailureSummary {
     byCategory: sortByCount(categoryCountsRaw),
     byModel: sortByCount(modelCountsRaw),
     byStrategy: sortByCount(strategyCountsRaw),
-    byTaskCategory: sortByCount(taskCategoryCountsRaw),
   };
 }
 
@@ -731,13 +732,6 @@ async function main(): Promise<void> {
         for (const [cat, count] of Object.entries(summary.byCategory)) {
           const pct = ((count / summary.totalFailures) * 100).toFixed(1);
           console.log(`    ${cat}: ${count} (${pct}%)`);
-        }
-      }
-
-      if (Object.keys(summary.byTaskCategory).length > 0) {
-        console.log("\n  By Task Category:");
-        for (const [cat, count] of Object.entries(summary.byTaskCategory)) {
-          console.log(`    ${cat}: ${count}`);
         }
       }
 

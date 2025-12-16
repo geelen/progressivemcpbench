@@ -13,7 +13,7 @@ export interface StrategyConfig {
 
 export const MODELS: ModelConfig[] = [
   { id: "groq/openai/gpt-oss-20b", provider: "groq", displayName: "GPT OSS 20B", order: 1 },
-  { id: "groq/emberglow/small", provider: "groq", displayName: "Emberglow Small", order: 2 },
+  { id: "groq/emberglow/large", provider: "groq", displayName: "Emberglow Large", order: 2 },
   { id: "groq/openai/gpt-oss-120b", provider: "groq", displayName: "GPT OSS 120B", order: 3 },
   { id: "groq/minimaxai/minimax-m2", provider: "groq", displayName: "Minimax M2", order: 4 },
   { id: "groq/moonshotai/kimi-k2-instruct-0905", provider: "groq", displayName: "Kimi K2", order: 5 },
