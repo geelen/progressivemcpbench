@@ -732,6 +732,30 @@ async function main(): Promise<void> {
         for (const [cat, count] of Object.entries(summary.byCategory)) {
           const pct = ((count / summary.totalFailures) * 100).toFixed(1);
           console.log(`    ${cat}: ${count} (${pct}%)`);
+          
+          const failuresInCategory = run.failures.filter(f => (f.failureCategory || "UNCATEGORIZED") === cat);
+          const causeGroups = new Map<string, { count: number; sampleIds: string[] }>();
+          
+          for (const f of failuresInCategory) {
+            const cause = f.errorMessages[0] || f.failureExplanation || "Unknown cause";
+            const truncatedCause = cause.length > 120 ? cause.slice(0, 120) + "..." : cause;
+            const existing = causeGroups.get(truncatedCause);
+            if (existing) {
+              existing.count++;
+              existing.sampleIds.push(f.sampleId);
+            } else {
+              causeGroups.set(truncatedCause, { count: 1, sampleIds: [f.sampleId] });
+            }
+          }
+          
+          const sortedCauses = [...causeGroups.entries()].sort((a, b) => b[1].count - a[1].count);
+          for (const [cause, { count: causeCount, sampleIds }] of sortedCauses) {
+            const samplePreview = sampleIds.length <= 3 
+              ? sampleIds.map(id => id.slice(0, 8)).join(", ")
+              : `${sampleIds.slice(0, 3).map(id => id.slice(0, 8)).join(", ")}...`;
+            console.log(`      ${causeCount}x: ${cause}`);
+            console.log(`         samples: ${samplePreview}`);
+          }
         }
       }
 
