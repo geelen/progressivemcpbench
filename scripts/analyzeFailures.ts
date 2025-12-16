@@ -452,7 +452,7 @@ async function categorizeFailure(
 async function categorizeFailures(
   failures: FailedSample[],
   concurrency: number = 10
-): Promise<void> {
+): Promise<FailedSample[]> {
   // First pass: pattern-based pre-categorization
   let preCategorized = 0;
   const needsLlm: FailedSample[] = [];
@@ -470,13 +470,13 @@ async function categorizeFailures(
   }
   
   if (needsLlm.length === 0) {
-    return;
+    return [];
   }
   
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
     console.error("Error: GROQ_API_KEY not set, skipping LLM categorization");
-    return;
+    return needsLlm;
   }
 
   console.log(`Categorizing ${needsLlm.length} failures using gpt-oss-120b...`);
@@ -500,6 +500,147 @@ async function categorizeFailures(
 
   await Promise.all(workers);
   console.log(`  Done: ${completed}/${needsLlm.length} categorized`);
+  
+  return needsLlm;
+}
+
+interface PatternSuggestion {
+  pattern: string;
+  suggestedCategory: string;
+  count: number;
+  examples: string[];
+}
+
+async function analyzeForMissingPatterns(
+  llmCategorizedFailures: FailedSample[]
+): Promise<PatternSuggestion[]> {
+  if (llmCategorizedFailures.length === 0) {
+    return [];
+  }
+
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) {
+    return [];
+  }
+
+  // Group failures by their primary error message
+  const errorGroups = new Map<string, { count: number; category: string; examples: string[] }>();
+  for (const f of llmCategorizedFailures) {
+    const error = f.errorMessages[0] || "";
+    if (!error) continue;
+    
+    const existing = errorGroups.get(error);
+    if (existing) {
+      existing.count++;
+    } else {
+      errorGroups.set(error, { 
+        count: 1, 
+        category: f.failureCategory || "UNKNOWN",
+        examples: [f.sampleId]
+      });
+    }
+  }
+
+  // Only analyze if there are repeated errors (potential patterns)
+  const repeatedErrors = [...errorGroups.entries()]
+    .filter(([_, data]) => data.count >= 2)
+    .map(([error, data]) => ({
+      error: error.slice(0, 300),
+      count: data.count,
+      llmCategory: data.category
+    }));
+
+  if (repeatedErrors.length === 0) {
+    return [];
+  }
+
+  const prompt = `You are analyzing failure patterns from an AI agent benchmark.
+
+These errors were categorized by an LLM, but we want to identify if any should be PRE-FILTERED 
+using simple pattern matching instead (for consistency and speed).
+
+ONLY suggest pre-filtering for INFRASTRUCTURE/SYSTEM errors like:
+- Tool call failures, API errors, service unavailable
+- Connection timeouts, rate limits
+- Missing API keys, authentication failures
+- Malformed responses from external services
+
+DO NOT suggest pre-filtering for GENUINE MODEL FAILURES like:
+- Reasoning errors, wrong answers
+- Incomplete answers (model gave up or didn't finish)
+- Model misunderstanding the task
+
+Here are the repeated error messages found:
+
+${JSON.stringify(repeatedErrors, null, 2)}
+
+If you find patterns that should be pre-filtered, respond with JSON:
+{
+  "suggestions": [
+    {
+      "pattern": "regex or substring to match",
+      "suggestedCategory": "CATEGORY_NAME",
+      "reason": "why this is an infrastructure error"
+    }
+  ]
+}
+
+If no patterns should be pre-filtered (all are genuine model failures), respond:
+{ "suggestions": [] }`;
+
+  try {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "openai/gpt-oss-120b",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.0,
+        max_tokens: 500,
+      }),
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const data = (await response.json()) as {
+      choices: { message: { content: string } }[];
+    };
+    const content = data.choices[0]?.message?.content;
+
+    if (!content) return [];
+
+    // Parse JSON from response
+    let text = content.trim();
+    const start = text.indexOf("{");
+    const end = text.lastIndexOf("}") + 1;
+    if (start >= 0 && end > start) {
+      text = text.slice(start, end);
+    }
+
+    const result = JSON.parse(text);
+    if (!result.suggestions || result.suggestions.length === 0) {
+      return [];
+    }
+
+    return result.suggestions.map((s: { pattern: string; suggestedCategory: string }) => {
+      const matchingErrors = repeatedErrors.filter(e => 
+        e.error.includes(s.pattern) || new RegExp(s.pattern, "i").test(e.error)
+      );
+      return {
+        pattern: s.pattern,
+        suggestedCategory: s.suggestedCategory,
+        count: matchingErrors.reduce((sum, e) => sum + e.count, 0),
+        examples: matchingErrors.map(e => e.error.slice(0, 100))
+      };
+    }).filter((s: PatternSuggestion) => s.count > 0);
+  } catch {
+    return [];
+  }
 }
 
 function generateSummary(failures: FailedSample[]): FailureSummary {
@@ -712,6 +853,7 @@ async function main(): Promise<void> {
   }
 
   const runAnalyses: RunAnalysis[] = [];
+  const allLlmCategorized: FailedSample[] = [];
 
   for (const evalFile of evalFiles) {
     if (verbose) {
@@ -729,7 +871,8 @@ async function main(): Promise<void> {
     }
 
     if (!noLlm && processedFailures.length > 0) {
-      await categorizeFailures(processedFailures, concurrency);
+      const llmCategorized = await categorizeFailures(processedFailures, concurrency);
+      allLlmCategorized.push(...llmCategorized);
     }
 
     const summary = generateSummary(processedFailures);
@@ -812,6 +955,31 @@ async function main(): Promise<void> {
   const totalSamples = runAnalyses.reduce((sum, r) => sum + r.totalCount, 0);
 
   console.log(`\nSummary: ${totalRuns} run(s), ${totalPassed}/${totalSamples} passed, ${totalFailures} failures`);
+
+  // Meta-analysis: check if there are patterns we should be pre-filtering
+  if (!noLlm && allLlmCategorized.length >= 3) {
+    const suggestions = await analyzeForMissingPatterns(allLlmCategorized);
+    
+    if (suggestions.length > 0) {
+      console.log("\n" + "\x1b[33m" + "⚠".repeat(40) + "\x1b[0m");
+      console.log("\x1b[33;1mPOTENTIAL MISSING PRE-FILTER PATTERNS DETECTED\x1b[0m");
+      console.log("\x1b[33m" + "⚠".repeat(40) + "\x1b[0m");
+      console.log("\nThe following error patterns were sent to LLM but may be");
+      console.log("infrastructure errors that could be pre-filtered:\n");
+      
+      for (const s of suggestions) {
+        console.log(`\x1b[33;1m  ${s.suggestedCategory}\x1b[0m (${s.count} occurrences)`);
+        console.log(`    Pattern: \x1b[2m${s.pattern}\x1b[0m`);
+        if (s.examples.length > 0) {
+          console.log(`    Example: \x1b[2m${s.examples[0]}\x1b[0m`);
+        }
+        console.log();
+      }
+      
+      console.log("Consider adding these patterns to preCategorizeFailure()");
+      console.log("\x1b[33m" + "─".repeat(40) + "\x1b[0m\n");
+    }
+  }
 }
 
 main().catch((err) => {
