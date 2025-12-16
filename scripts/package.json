@@ -5,6 +5,7 @@
   "scripts": {
     "update-report": "bun run updateReport.ts",
     "full-bench": "bun run runFullBench.ts",
+    "analyze-failures": "bun run analyzeFailures.ts",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],
