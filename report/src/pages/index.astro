@@ -1,6 +1,10 @@
 ---
 import ResultsTable from "../components/ResultsTable";
 import BenchmarkChart from "../components/BenchmarkChart";
+import BaselineChart from "../components/BaselineChart";
+import StrategyProgressionChart from "../components/StrategyProgressionChart";
+import AdvancedStrategiesChart from "../components/AdvancedStrategiesChart";
+import TokenEfficiencyChart from "../components/TokenEfficiencyChart";
 import type { ReportJson } from "../types/report";
 
 import reportData from "../../../data/reports/report.json";
@@ -30,6 +34,14 @@ const report = reportData as ReportJson;
       h1 {
         margin-bottom: 8px;
       }
+      h2 {
+        margin-top: 48px;
+        margin-bottom: 16px;
+        font-size: 20px;
+        color: #444;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 8px;
+      }
       .meta {
         color: #666;
         font-size: 14px;
@@ -38,7 +50,7 @@ const report = reportData as ReportJson;
       .summary {
         display: flex;
         gap: 24px;
-        margin-bottom: 24px;
+        margin-bottom: 32px;
         flex-wrap: wrap;
       }
       .stat {
@@ -55,6 +67,33 @@ const report = reportData as ReportJson;
       .stat-value {
         font-size: 24px;
         font-weight: bold;
+      }
+      .section-intro {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 24px;
+        max-width: 800px;
+        line-height: 1.5;
+      }
+      details {
+        margin-top: 48px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 0;
+      }
+      summary {
+        padding: 16px 20px;
+        cursor: pointer;
+        font-weight: 600;
+        background: #f5f5f5;
+        border-radius: 8px;
+      }
+      details[open] summary {
+        border-radius: 8px 8px 0 0;
+        border-bottom: 1px solid #ddd;
+      }
+      .details-content {
+        padding: 20px;
       }
     </style>
   </head>
@@ -79,18 +118,87 @@ const report = reportData as ReportJson;
       </div>
     </div>
 
-    <BenchmarkChart
-      client:load
-      runs={report.runs}
-      models={report.dimensions.models}
-      strategies={report.dimensions.strategies}
-    />
+    <section>
+      <h2>1. Baseline Tool Calling Ability</h2>
+      <p class="section-intro">
+        Each model's performance on the <strong>minimal-tools</strong> strategy, 
+        where only the exact tools needed for each task are provided. This measures 
+        the model's fundamental ability to understand and correctly invoke tools 
+        without distractions or discovery overhead.
+      </p>
+      <BaselineChart
+        client:load
+        runs={report.runs}
+        models={report.dimensions.models}
+      />
+    </section>
 
-    <ResultsTable
-      client:load
-      runs={report.runs}
-      models={report.dimensions.models}
-      strategies={report.dimensions.strategies}
-    />
+    <section>
+      <h2>2. Strategy Impact on Accuracy</h2>
+      <p class="section-intro">
+        How accuracy degrades as we introduce more tools and require discovery.
+        From left to right: minimal-tools (best case), minimal-servers (some extra tools), 
+        distraction-64 (64 irrelevant tools), distraction-128 (128 irrelevant tools). 
+        Select models to compare their degradation patterns.
+      </p>
+      <StrategyProgressionChart
+        client:load
+        runs={report.runs}
+        models={report.dimensions.models}
+        strategies={report.dimensions.strategies}
+      />
+    </section>
+
+    <section>
+      <h2>3. Advanced Discovery Strategies</h2>
+      <p class="section-intro">
+        How do intelligent discovery mechanisms (copilot routing, directory lookup) 
+        compare to the baseline spectrum? The four baseline strategies show the range 
+        from best to worst case, while copilot and directory show where smarter 
+        discovery lands within that range.
+      </p>
+      <AdvancedStrategiesChart
+        client:load
+        runs={report.runs}
+        models={report.dimensions.models}
+        strategies={report.dimensions.strategies}
+      />
+    </section>
+
+    <section>
+      <h2>4. Token Efficiency</h2>
+      <p class="section-intro">
+        Accuracy vs total token usage for practical strategies. The ideal position 
+        is upper-left (high accuracy, low tokens). Directory strategy should show 
+        significantly lower token usage while maintaining competitive accuracy. 
+        Minimal-servers is shown at half opacity as it requires prior knowledge of 
+        which servers are needed.
+      </p>
+      <TokenEfficiencyChart
+        client:load
+        runs={report.runs}
+        models={report.dimensions.models}
+        strategies={report.dimensions.strategies}
+      />
+    </section>
+
+    <details>
+      <summary>Raw Data & Detailed Charts</summary>
+      <div class="details-content">
+        <BenchmarkChart
+          client:load
+          runs={report.runs}
+          models={report.dimensions.models}
+          strategies={report.dimensions.strategies}
+        />
+
+        <ResultsTable
+          client:load
+          runs={report.runs}
+          models={report.dimensions.models}
+          strategies={report.dimensions.strategies}
+        />
+      </div>
+    </details>
   </body>
 </html>
