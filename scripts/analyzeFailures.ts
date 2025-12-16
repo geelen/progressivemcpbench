@@ -335,6 +335,27 @@ Respond with JSON only:
   "explanation": "<1-2 sentence explanation of what went wrong>"
 }`;
 
+function preCategorizeFailure(failure: FailedSample): boolean {
+  const primaryError = failure.errorMessages[0] || "";
+  
+  // Tool call validation failures - model tried to call a tool that doesn't exist
+  const toolValidationMatch = primaryError.match(/attempted to call tool '([^']+)' which was not in request\.tools/);
+  if (toolValidationMatch) {
+    failure.failureCategory = "INVALID_TOOL_CALL";
+    failure.failureExplanation = `Model tried to call non-existent tool '${toolValidationMatch[1]}'`;
+    return true;
+  }
+  
+  // Timeout errors
+  if (failure.timeout || primaryError.toLowerCase().includes("timeout")) {
+    failure.failureCategory = "TOOL_TIMEOUT";
+    failure.failureExplanation = "Operation timed out";
+    return true;
+  }
+  
+  return false;
+}
+
 async function categorizeFailure(
   failure: FailedSample,
   apiKey: string
@@ -432,16 +453,35 @@ async function categorizeFailures(
   failures: FailedSample[],
   concurrency: number = 10
 ): Promise<void> {
+  // First pass: pattern-based pre-categorization
+  let preCategorized = 0;
+  const needsLlm: FailedSample[] = [];
+  
+  for (const failure of failures) {
+    if (preCategorizeFailure(failure)) {
+      preCategorized++;
+    } else {
+      needsLlm.push(failure);
+    }
+  }
+  
+  if (preCategorized > 0) {
+    console.log(`Pre-categorized ${preCategorized} failures by pattern`);
+  }
+  
+  if (needsLlm.length === 0) {
+    return;
+  }
+  
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
-    console.error("Error: GROQ_API_KEY not set");
+    console.error("Error: GROQ_API_KEY not set, skipping LLM categorization");
     return;
   }
 
-  console.log(`Categorizing ${failures.length} failures using gpt-oss-120b...`);
+  console.log(`Categorizing ${needsLlm.length} failures using gpt-oss-120b...`);
 
-  const semaphore = { count: 0 };
-  const queue = [...failures];
+  const queue = [...needsLlm];
   let completed = 0;
 
   const workers = Array.from({ length: concurrency }, async () => {
@@ -453,13 +493,13 @@ async function categorizeFailures(
       completed++;
 
       if (completed % 50 === 0) {
-        console.log(`  Progress: ${completed}/${failures.length}`);
+        console.log(`  Progress: ${completed}/${needsLlm.length}`);
       }
     }
   });
 
   await Promise.all(workers);
-  console.log(`  Done: ${completed}/${failures.length} categorized`);
+  console.log(`  Done: ${completed}/${needsLlm.length} categorized`);
 }
 
 function generateSummary(failures: FailedSample[]): FailureSummary {
