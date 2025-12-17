@@ -1,4 +1,4 @@
-import { createMemo, onMount, onCleanup } from "solid-js";
+import { createMemo, onMount, onCleanup, createEffect } from "solid-js";
 import type { RunSummary, ModelConfig, StrategyConfig } from "../types/report";
 import * as echarts from "echarts";
 
@@ -198,6 +198,14 @@ export default function TokenEfficiencyChart(props: Props) {
         window.removeEventListener("resize", handleResize);
         chartInstance?.dispose();
       });
+    }
+  });
+
+  // Update chart when props change
+  createEffect(() => {
+    const options = getChartOptions();
+    if (chartInstance) {
+      chartInstance.setOption(options, { notMerge: true });
     }
   });
 

@@ -1,10 +1,7 @@
 ---
 import ResultsTable from "../components/ResultsTable";
 import BenchmarkChart from "../components/BenchmarkChart";
-import BaselineChart from "../components/BaselineChart";
-import StrategyProgressionChart from "../components/StrategyProgressionChart";
-import AdvancedStrategiesChart from "../components/AdvancedStrategiesChart";
-import TokenEfficiencyChart from "../components/TokenEfficiencyChart";
+import ChartsContainer from "../components/ChartsContainer";
 import type { ReportJson } from "../types/report";
 
 import reportData from "../../../data/reports/report.json";
@@ -118,69 +115,12 @@ const report = reportData as ReportJson;
       </div>
     </div>
 
-    <section>
-      <h2>1. Baseline Tool Calling Ability</h2>
-      <p class="section-intro">
-        Each model's performance on the <strong>minimal-tools</strong> strategy, 
-        where only the exact tools needed for each task are provided. This measures 
-        the model's fundamental ability to understand and correctly invoke tools 
-        without distractions or discovery overhead.
-      </p>
-      <BaselineChart
-        client:load
-        runs={report.runs}
-        models={report.dimensions.models}
-      />
-    </section>
-
-    <section>
-      <h2>2. Strategy Impact on Accuracy</h2>
-      <p class="section-intro">
-        How accuracy degrades as we introduce more tools and require discovery.
-        From left to right: minimal-tools (best case), minimal-servers (some extra tools), 
-        distraction-64 (64 irrelevant tools), distraction-128 (128 irrelevant tools). 
-        Select models to compare their degradation patterns.
-      </p>
-      <StrategyProgressionChart
-        client:load
-        runs={report.runs}
-        models={report.dimensions.models}
-        strategies={report.dimensions.strategies}
-      />
-    </section>
-
-    <section>
-      <h2>3. Advanced Discovery Strategies</h2>
-      <p class="section-intro">
-        How do intelligent discovery mechanisms (copilot routing, directory lookup) 
-        compare to the baseline spectrum? The four baseline strategies show the range 
-        from best to worst case, while copilot and directory show where smarter 
-        discovery lands within that range.
-      </p>
-      <AdvancedStrategiesChart
-        client:load
-        runs={report.runs}
-        models={report.dimensions.models}
-        strategies={report.dimensions.strategies}
-      />
-    </section>
-
-    <section>
-      <h2>4. Token Efficiency</h2>
-      <p class="section-intro">
-        Accuracy vs total token usage for practical strategies. The ideal position 
-        is upper-left (high accuracy, low tokens). Directory strategy should show 
-        significantly lower token usage while maintaining competitive accuracy. 
-        Minimal-servers is shown at half opacity as it requires prior knowledge of 
-        which servers are needed.
-      </p>
-      <TokenEfficiencyChart
-        client:load
-        runs={report.runs}
-        models={report.dimensions.models}
-        strategies={report.dimensions.strategies}
-      />
-    </section>
+    <ChartsContainer
+      client:load
+      runs={report.runs}
+      models={report.dimensions.models}
+      strategies={report.dimensions.strategies}
+    />
 
     <details>
       <summary>Raw Data & Detailed Charts</summary>

@@ -1,4 +1,4 @@
-import { createSignal, createMemo, onMount, onCleanup, For } from "solid-js";
+import { createMemo, onMount, onCleanup, createEffect } from "solid-js";
 import type { RunSummary, ModelConfig, StrategyConfig } from "../types/report";
 import * as echarts from "echarts";
 
@@ -22,16 +22,6 @@ export default function StrategyProgressionChart(props: Props) {
 
   const sortedModels = createMemo(() => {
     return [...props.models].sort((a, b) => a.order - b.order);
-  });
-
-  const defaultSelectedModels = createMemo(() => {
-    return new Set(sortedModels().map(m => m.id));
-  });
-
-  const [selectedModels, setSelectedModels] = createSignal<Set<string>>(new Set());
-
-  onMount(() => {
-    setSelectedModels(defaultSelectedModels());
   });
 
   const modelColorMap = createMemo(() => {
@@ -58,7 +48,7 @@ export default function StrategyProgressionChart(props: Props) {
   });
 
   const chartData = createMemo(() => {
-    const models = sortedModels().filter(m => selectedModels().has(m.id));
+    const models = sortedModels();
     const runsMap = runsByModelStrategy();
     const colors = modelColorMap();
     
@@ -294,19 +284,10 @@ export default function StrategyProgressionChart(props: Props) {
     };
   };
 
-  const updateChart = () => {
-    if (chartInstance) {
-      chartInstance.setOption(getChartOptions(), { notMerge: true });
-    }
-  };
-
   onMount(() => {
     if (chartContainer) {
       chartInstance = echarts.init(chartContainer);
-      
-      setTimeout(() => {
-        updateChart();
-      }, 0);
+      chartInstance.setOption(getChartOptions());
 
       const handleResize = () => chartInstance?.resize();
       window.addEventListener("resize", handleResize);
@@ -317,18 +298,13 @@ export default function StrategyProgressionChart(props: Props) {
     }
   });
 
-  const toggleModel = (modelId: string) => {
-    setSelectedModels(prev => {
-      const next = new Set(prev);
-      if (next.has(modelId)) {
-        next.delete(modelId);
-      } else {
-        next.add(modelId);
-      }
-      return next;
-    });
-    setTimeout(updateChart, 0);
-  };
+  // Update chart when props change
+  createEffect(() => {
+    const options = getChartOptions();
+    if (chartInstance) {
+      chartInstance.setOption(options, { notMerge: true });
+    }
+  });
 
   return (
     <div style={{ "margin-bottom": "48px" }}>
@@ -341,48 +317,6 @@ export default function StrategyProgressionChart(props: Props) {
           "border-radius": "8px",
         }}
       />
-      <div
-        style={{
-          display: "flex",
-          gap: "8px",
-          "margin-top": "16px",
-          "flex-wrap": "wrap",
-          "align-items": "center",
-        }}
-      >
-        <span style={{ "font-size": "12px", color: "#666", "margin-right": "4px" }}>
-          Select models:
-        </span>
-        <For each={sortedModels()}>
-          {(model) => (
-            <button
-              onClick={() => toggleModel(model.id)}
-              style={{
-                display: "flex",
-                "align-items": "center",
-                gap: "6px",
-                padding: "4px 10px",
-                border: "1px solid #ddd",
-                "border-radius": "4px",
-                background: selectedModels().has(model.id) ? "#fff" : "#f5f5f5",
-                opacity: selectedModels().has(model.id) ? 1 : 0.5,
-                cursor: "pointer",
-                "font-size": "12px",
-              }}
-            >
-              <span
-                style={{
-                  width: "12px",
-                  height: "12px",
-                  "border-radius": "2px",
-                  background: modelColorMap().get(model.id),
-                }}
-              />
-              {model.displayName}
-            </button>
-          )}
-        </For>
-      </div>
       <div style={{ "margin-top": "12px", "font-size": "11px", color: "#888" }}>
         <strong>Reading order (left to right per model):</strong> Minimal Tools → Minimal Servers → Distraction 64 → Distraction 128
       </div>
