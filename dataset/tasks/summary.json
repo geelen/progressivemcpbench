@@ -1,0 +1,58 @@
+{
+  "total_tasks": 20,
+  "servers_used": [
+    "mcp-simple-arxiv",
+    "maven-deps-server",
+    "word-document-server",
+    "hackernews",
+    "arxiv-mcp-server",
+    "wikipedia",
+    "biomcp",
+    "music-analysis",
+    "forex",
+    "pdf-reader-mcp",
+    "filesystem",
+    "commodities-markets",
+    "excel",
+    "searxng",
+    "playwright"
+  ],
+  "tools_used": [
+    "docx_to_html",
+    "list_allowed_directories",
+    "document_reader",
+    "get_document_text",
+    "read_pdf",
+    "get_story",
+    "read_multiple_files",
+    "get_duration",
+    "excel_read_sheet",
+    "excel_describe_sheets",
+    "read_file",
+    "tempo",
+    "beat_track",
+    "search",
+    "list_directory",
+    "excel_read",
+    "load",
+    "search_papers",
+    "trial_protocol_getter",
+    "get_latest_release",
+    "playwright_get_visible_html",
+    "get_commodity_price",
+    "get_exchange_rate",
+    "get_paper_data"
+  ],
+  "categories": [
+    "Leisure",
+    "Lifestyle",
+    "Finance",
+    "Office"
+  ],
+  "tasks_by_category": {
+    "Leisure": 2,
+    "Office": 9,
+    "Lifestyle": 7,
+    "Finance": 2
+  }
+}
