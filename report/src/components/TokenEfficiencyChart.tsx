@@ -135,11 +135,12 @@ export default function TokenEfficiencyChart(props: Props) {
           const tokensFormatted = tokens < 1_000_000 
             ? `${(tokens / 1000).toFixed(0)}K` 
             : `${(tokens / 1_000_000).toFixed(2)}M`;
-          const std = run.score.stdDev;
+          const stderr = run.score.stderr;
+          const ci95 = stderr !== null ? stderr * 1.96 : null;
           return `
             <strong>${model.displayName}</strong><br/>
             Strategy: ${getStrategyLabel(strategy)}<br/>
-            Accuracy: ${(run.score.mean * 100).toFixed(1)}%${std !== null ? ` ± ${(std * 100).toFixed(1)}%` : ""}<br/>
+            Accuracy: ${(run.score.mean * 100).toFixed(1)}%${ci95 !== null ? ` ± ${(ci95 * 100).toFixed(1)}%` : ""}<br/>
             Total Tokens: ${tokensFormatted}<br/>
             Samples: ${run.sampleCount}
           `;

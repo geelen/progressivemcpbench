@@ -117,24 +117,26 @@ export default function StrategyProgressionChart(props: Props) {
     const seriesData = dataPoints.map((d, idx) => {
       if (!d.run) return null;
       const mean = d.run.score.mean ?? 0;
-      const std = d.run.score.stdDev ?? 0;
+      const stderr = d.run.score.stderr ?? 0;
+      const ci95 = stderr * 1.96;
       return {
         value: [idx, mean],
         itemStyle: { color: d.color },
         run: d.run,
         model: d.model,
         strategy: d.strategy,
-        low: Math.max(0, mean - std),
-        high: Math.min(1, mean + std),
-        stdDev: std,
+        low: Math.max(0, mean - ci95),
+        high: Math.min(1, mean + ci95),
+        ci95,
       };
     }).filter(Boolean);
 
     const customSeriesData = dataPoints.map((d, idx) => {
       if (!d.run) return [idx, null, null, null, d.color];
       const mean = d.run.score.mean ?? 0;
-      const std = d.run.score.stdDev ?? 0;
-      return [idx, Math.min(1, mean + std), Math.max(0, mean - std), mean, d.color];
+      const stderr = d.run.score.stderr ?? 0;
+      const ci95 = stderr * 1.96;
+      return [idx, Math.min(1, mean + ci95), Math.max(0, mean - ci95), mean, d.color];
     });
 
     return {
@@ -155,7 +157,7 @@ export default function StrategyProgressionChart(props: Props) {
             <strong>${data.model.displayName}</strong><br/>
             Strategy: ${strategyName}<br/>
             Score: ${(data.value[1] * 100).toFixed(1)}%<br/>
-            ${data.stdDev ? `± ${(data.stdDev * 100).toFixed(1)}% (1 std dev)` : ""}
+            ${data.ci95 ? `± ${(data.ci95 * 100).toFixed(1)}% (95% CI)` : ""}
           `;
         },
       },

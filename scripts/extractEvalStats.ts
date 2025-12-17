@@ -8,12 +8,13 @@ function mean(arr: number[]): number | null {
   return arr.reduce((a, b) => a + b, 0) / arr.length;
 }
 
-function stdDev(arr: number[]): number | null {
+function stderr(arr: number[]): number | null {
   if (arr.length < 2) return null;
   const avg = arr.reduce((a, b) => a + b, 0) / arr.length;
   const squaredDiffs = arr.map((x) => (x - avg) ** 2);
   const variance = squaredDiffs.reduce((a, b) => a + b, 0) / arr.length;
-  return Math.sqrt(variance);
+  const stdDev = Math.sqrt(variance);
+  return stdDev / Math.sqrt(arr.length);
 }
 
 function median(arr: number[]): number | null {
@@ -384,7 +385,7 @@ export function aggregateStats(evalStats: EvalStats): RunSummary {
       task: evalStats.task,
       sampleCount: 0,
       runAt,
-      score: { mean: null, min: null, max: null, stdDev: null },
+      score: { mean: null, min: null, max: null, stderr: null },
       time: {
         totalSum: null,
         totalMean: null,
@@ -467,7 +468,7 @@ export function aggregateStats(evalStats: EvalStats): RunSummary {
       mean: mean(scores),
       min: scores.length > 0 ? Math.min(...scores) : null,
       max: scores.length > 0 ? Math.max(...scores) : null,
-      stdDev: stdDev(scores),
+      stderr: stderr(scores),
     },
     time: {
       totalSum: totalTimes.length > 0 ? sum(totalTimes) : null,

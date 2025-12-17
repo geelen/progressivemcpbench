@@ -127,8 +127,9 @@ export default function AdvancedStrategiesChart(props: Props) {
     const customSeriesData = dataPoints.map((d, idx) => {
       if (!d.run) return [idx, null, null, null, d.color, d.isAdvanced];
       const mean = d.run.score.mean ?? 0;
-      const std = d.run.score.stdDev ?? 0;
-      return [idx, Math.min(1, mean + std), Math.max(0, mean - std), mean, d.color, d.isAdvanced];
+      const stderr = d.run.score.stderr ?? 0;
+      const ci95 = stderr * 1.96;
+      return [idx, Math.min(1, mean + ci95), Math.max(0, mean - ci95), mean, d.color, d.isAdvanced];
     });
 
     const modelPositions: Array<{ model: ModelConfig; center: number }> = [];
@@ -156,12 +157,13 @@ export default function AdvancedStrategiesChart(props: Props) {
           if (mean === null) return "";
           const d = dataPoints[idx];
           if (!d.run) return "";
-          const std = d.run.score.stdDev;
+          const stderr = d.run.score.stderr;
+          const ci95 = stderr !== null ? stderr * 1.96 : null;
           return `
             <strong>${d.model.displayName}</strong><br/>
             Strategy: ${getStrategyLabel(d.strategy)}<br/>
             Score: ${(mean * 100).toFixed(1)}%<br/>
-            ${std !== null ? `± ${(std * 100).toFixed(1)}% (1 std dev)` : ""}
+            ${ci95 !== null ? `± ${(ci95 * 100).toFixed(1)}% (95% CI)` : ""}
           `;
         },
       },
