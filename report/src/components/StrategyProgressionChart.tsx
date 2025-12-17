@@ -25,9 +25,7 @@ export default function StrategyProgressionChart(props: Props) {
   });
 
   const defaultSelectedModels = createMemo(() => {
-    const models = sortedModels();
-    const topModels = models.slice(0, 5).map(m => m.id);
-    return new Set(topModels);
+    return new Set(sortedModels().map(m => m.id));
   });
 
   const [selectedModels, setSelectedModels] = createSignal<Set<string>>(new Set());
@@ -72,11 +70,13 @@ export default function StrategyProgressionChart(props: Props) {
       color: string;
       xIndex: number;
     }> = [];
+    const modelCenters: Array<{ model: ModelConfig; center: number }> = [];
 
     models.forEach((model, modelIdx) => {
-      PROGRESSION_STRATEGIES.forEach((stratId, stratIdx) => {
+      const startIdx = xAxisData.length;
+      PROGRESSION_STRATEGIES.forEach((stratId) => {
         const xIndex = xAxisData.length;
-        xAxisData.push(strategyLabels()[stratIdx]);
+        xAxisData.push(""); // empty label, we'll use model name below
         
         const run = runsMap.get(`${model.id}::${stratId}`);
         dataPoints.push({
@@ -87,16 +87,19 @@ export default function StrategyProgressionChart(props: Props) {
           xIndex,
         });
       });
+      const endIdx = xAxisData.length - 1;
+      modelCenters.push({ model, center: (startIdx + endIdx) / 2 });
+      
       if (modelIdx < models.length - 1) {
         xAxisData.push(""); // spacer between model groups
       }
     });
 
-    return { xAxisData, dataPoints, models };
+    return { xAxisData, dataPoints, models, modelCenters };
   });
 
   const getChartOptions = (): echarts.EChartsOption => {
-    const { xAxisData, dataPoints, models } = chartData();
+    const { xAxisData, dataPoints, models, modelCenters } = chartData();
     
     // Calculate positions for separator lines between model groups
     const separatorPositions: number[] = [];
@@ -104,9 +107,15 @@ export default function StrategyProgressionChart(props: Props) {
     models.forEach((model, modelIdx) => {
       pos += PROGRESSION_STRATEGIES.length;
       if (modelIdx < models.length - 1) {
-        separatorPositions.push(pos - 0.5); // position at the spacer
+        separatorPositions.push(pos); // position at the spacer
         pos++; // account for spacer
       }
+    });
+    
+    // Build x-axis labels with model names at center positions
+    const xAxisLabels = xAxisData.map((_, idx) => {
+      const centerEntry = modelCenters.find(mc => Math.round(mc.center) === idx);
+      return centerEntry ? centerEntry.model.displayName : "";
     });
 
     const seriesData = dataPoints.map((d) => {
@@ -165,13 +174,14 @@ export default function StrategyProgressionChart(props: Props) {
       },
       xAxis: {
         type: "category",
-        data: xAxisData,
+        data: xAxisLabels,
         axisLabel: {
-          rotate: 45,
           interval: 0,
-          fontSize: 10,
+          fontSize: 11,
+          fontWeight: "bold",
         },
         axisTick: { show: false },
+        axisLine: { show: false },
       },
       yAxis: {
         type: "value",
@@ -268,18 +278,18 @@ export default function StrategyProgressionChart(props: Props) {
           symbolSize: 0,
           data: seriesData,
           z: 11,
+          markLine: {
+            silent: true,
+            symbol: "none",
+            lineStyle: {
+              color: "#ccc",
+              type: "solid",
+              width: 1,
+            },
+            data: separatorPositions.map(x => ({ xAxis: x })),
+          },
         },
       ],
-      markLine: {
-        silent: true,
-        symbol: "none",
-        lineStyle: {
-          color: "#ddd",
-          type: "solid",
-          width: 1,
-        },
-        data: separatorPositions.map(x => ({ xAxis: x })),
-      },
     };
   };
 
@@ -371,6 +381,9 @@ export default function StrategyProgressionChart(props: Props) {
             </button>
           )}
         </For>
+      </div>
+      <div style={{ "margin-top": "12px", "font-size": "11px", color: "#888" }}>
+        <strong>Reading order (left to right per model):</strong> Minimal Tools → Minimal Servers → Distraction 64 → Distraction 128
       </div>
     </div>
   );

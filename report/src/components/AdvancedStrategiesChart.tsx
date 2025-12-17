@@ -26,9 +26,7 @@ export default function AdvancedStrategiesChart(props: Props) {
   });
 
   const defaultSelectedModels = createMemo(() => {
-    const models = sortedModels();
-    const topModels = models.slice(0, 4).map(m => m.id);
-    return new Set(topModels);
+    return new Set(sortedModels().map(m => m.id));
   });
 
   const [selectedModels, setSelectedModels] = createSignal<Set<string>>(new Set());
@@ -64,6 +62,7 @@ export default function AdvancedStrategiesChart(props: Props) {
     const colors = modelColorMap();
     
     const xAxisData: string[] = [];
+    const xAxisLabels: string[] = [];
     const dataPoints: Array<{
       model: ModelConfig;
       strategy: string;
@@ -72,11 +71,14 @@ export default function AdvancedStrategiesChart(props: Props) {
       isAdvanced: boolean;
       xIndex: number;
     }> = [];
+    const separatorPositions: number[] = [];
 
     models.forEach((model, modelIdx) => {
+      // Baseline strategies - label with model name in center
+      const baselineStart = xAxisData.length;
       BASELINE_STRATEGIES.forEach(stratId => {
         const xIndex = xAxisData.length;
-        xAxisData.push(getStrategyLabel(stratId));
+        xAxisData.push("");
         const run = runsMap.get(`${model.id}::${stratId}`);
         dataPoints.push({
           model,
@@ -87,12 +89,15 @@ export default function AdvancedStrategiesChart(props: Props) {
           xIndex,
         });
       });
+      const baselineEnd = xAxisData.length - 1;
+      const baselineCenter = Math.round((baselineStart + baselineEnd) / 2);
       
       xAxisData.push(""); // spacer between baseline and advanced
 
+      // Advanced strategies - label with strategy names
       ADVANCED_STRATEGIES.forEach(stratId => {
         const xIndex = xAxisData.length;
-        xAxisData.push(getStrategyLabel(stratId));
+        xAxisData.push("");
         const run = runsMap.get(`${model.id}::${stratId}`);
         dataPoints.push({
           model,
@@ -105,33 +110,34 @@ export default function AdvancedStrategiesChart(props: Props) {
       });
 
       if (modelIdx < models.length - 1) {
+        separatorPositions.push(xAxisData.length);
         xAxisData.push(""); // spacer between model groups
+      }
+      
+      // Build labels - model name at baseline center, strategy names for advanced
+      for (let i = baselineStart; i <= baselineEnd; i++) {
+        xAxisLabels[i] = (i === baselineCenter) ? model.displayName : "";
+      }
+      xAxisLabels[baselineEnd + 1] = ""; // spacer
+      xAxisLabels[baselineEnd + 2] = "Copilot";
+      xAxisLabels[baselineEnd + 3] = "Directory";
+      if (modelIdx < models.length - 1) {
+        xAxisLabels[baselineEnd + 4] = ""; // spacer between models
       }
     });
 
-    return { xAxisData, dataPoints, models };
+    return { xAxisData, xAxisLabels, dataPoints, models, separatorPositions };
   });
 
   const getChartOptions = (): echarts.EChartsOption => {
-    const { xAxisData, dataPoints, models } = chartData();
+    const { xAxisLabels, dataPoints, separatorPositions } = chartData();
 
-    const customSeriesData = dataPoints.map((d) => {
-      if (!d.run) return [d.xIndex, null, null, null, d.color, d.isAdvanced];
+    const customSeriesData = dataPoints.map((d, dataIdx) => {
+      if (!d.run) return [d.xIndex, null, null, null, d.color, d.isAdvanced, dataIdx];
       const mean = d.run.score.mean ?? 0;
       const stderr = d.run.score.stderr ?? 0;
       const ci95 = stderr * 1.96;
-      return [d.xIndex, Math.min(1, mean + ci95), Math.max(0, mean - ci95), mean, d.color, d.isAdvanced];
-    });
-
-    // Calculate positions for separator lines between model groups
-    const separatorPositions: number[] = [];
-    let pos = 0;
-    models.forEach((model, modelIdx) => {
-      pos += BASELINE_STRATEGIES.length + 1 + ADVANCED_STRATEGIES.length; // +1 for spacer between baseline/advanced
-      if (modelIdx < models.length - 1) {
-        separatorPositions.push(pos - 0.5); // position at the spacer
-        pos++; // spacer between models
-      }
+      return [d.xIndex, Math.min(1, mean + ci95), Math.max(0, mean - ci95), mean, d.color, d.isAdvanced, dataIdx];
     });
 
     return {
@@ -145,10 +151,10 @@ export default function AdvancedStrategiesChart(props: Props) {
       tooltip: {
         trigger: "item",
         formatter: (params: any) => {
-          const [idx, , , mean] = params.data;
+          const [, , , mean, , , dataIdx] = params.data;
           if (mean === null) return "";
-          const d = dataPoints[idx];
-          if (!d.run) return "";
+          const d = dataPoints[dataIdx];
+          if (!d || !d.run) return "";
           const stderr = d.run.score.stderr;
           const ci95 = stderr !== null ? stderr * 1.96 : null;
           return `
@@ -168,13 +174,13 @@ export default function AdvancedStrategiesChart(props: Props) {
       },
       xAxis: {
         type: "category",
-        data: xAxisData,
+        data: xAxisLabels,
         axisLabel: {
-          rotate: 45,
           interval: 0,
-          fontSize: 9,
+          fontSize: 10,
         },
         axisTick: { show: false },
+        axisLine: { show: false },
       },
       yAxis: {
         type: "value",
@@ -271,18 +277,18 @@ export default function AdvancedStrategiesChart(props: Props) {
           },
           data: customSeriesData,
           z: 10,
+          markLine: {
+            silent: true,
+            symbol: "none",
+            lineStyle: {
+              color: "#ccc",
+              type: "solid",
+              width: 1,
+            },
+            data: separatorPositions.map(x => ({ xAxis: x })),
+          },
         },
       ],
-      markLine: {
-        silent: true,
-        symbol: "none",
-        lineStyle: {
-          color: "#ddd",
-          type: "solid",
-          width: 1,
-        },
-        data: separatorPositions.map(x => ({ xAxis: x })),
-      },
     };
   };
 
