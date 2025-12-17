@@ -281,6 +281,7 @@ export default function StrategyProgressionChart(props: Props) {
           markLine: {
             silent: true,
             symbol: "none",
+            label: { show: false },
             lineStyle: {
               color: "#ccc",
               type: "solid",
