@@ -64,21 +64,19 @@ export default function StrategyProgressionChart(props: Props) {
     const runsMap = runsByModelStrategy();
     const colors = modelColorMap();
     
-    const categories: string[] = [];
+    const xAxisData: string[] = [];
     const dataPoints: Array<{
       model: ModelConfig;
       strategy: string;
       run: RunSummary | undefined;
       color: string;
-      categoryIndex: number;
+      xIndex: number;
     }> = [];
 
     models.forEach((model, modelIdx) => {
       PROGRESSION_STRATEGIES.forEach((stratId, stratIdx) => {
-        const categoryLabel = modelIdx === 0 
-          ? strategyLabels()[stratIdx]
-          : "";
-        categories.push(categoryLabel);
+        const xIndex = xAxisData.length;
+        xAxisData.push(strategyLabels()[stratIdx]);
         
         const run = runsMap.get(`${model.id}::${stratId}`);
         dataPoints.push({
@@ -86,41 +84,39 @@ export default function StrategyProgressionChart(props: Props) {
           strategy: stratId,
           run,
           color: colors.get(model.id) || MODEL_COLORS[0],
-          categoryIndex: categories.length - 1,
+          xIndex,
         });
       });
       if (modelIdx < models.length - 1) {
-        categories.push("");
+        xAxisData.push(""); // spacer between model groups
       }
     });
 
-    return { categories, dataPoints, models };
+    return { xAxisData, dataPoints, models };
   });
 
   const getChartOptions = (): echarts.EChartsOption => {
-    const { dataPoints, models } = chartData();
-    const strategies = strategyLabels();
+    const { xAxisData, dataPoints, models } = chartData();
     
-    const xAxisData: string[] = [];
     const modelPositions: Array<{ model: ModelConfig; start: number; end: number }> = [];
-    
+    let pos = 0;
     models.forEach((model, modelIdx) => {
-      const start = xAxisData.length;
-      strategies.forEach(s => xAxisData.push(s));
-      const end = xAxisData.length - 1;
+      const start = pos;
+      pos += PROGRESSION_STRATEGIES.length;
+      const end = pos - 1;
       modelPositions.push({ model, start, end });
       if (modelIdx < models.length - 1) {
-        xAxisData.push("");
+        pos++; // account for spacer
       }
     });
 
-    const seriesData = dataPoints.map((d, idx) => {
+    const seriesData = dataPoints.map((d) => {
       if (!d.run) return null;
       const mean = d.run.score.mean ?? 0;
       const stderr = d.run.score.stderr ?? 0;
       const ci95 = stderr * 1.96;
       return {
-        value: [idx, mean],
+        value: [d.xIndex, mean],
         itemStyle: { color: d.color },
         run: d.run,
         model: d.model,
@@ -131,12 +127,12 @@ export default function StrategyProgressionChart(props: Props) {
       };
     }).filter(Boolean);
 
-    const customSeriesData = dataPoints.map((d, idx) => {
-      if (!d.run) return [idx, null, null, null, d.color];
+    const customSeriesData = dataPoints.map((d) => {
+      if (!d.run) return [d.xIndex, null, null, null, d.color];
       const mean = d.run.score.mean ?? 0;
       const stderr = d.run.score.stderr ?? 0;
       const ci95 = stderr * 1.96;
-      return [idx, Math.min(1, mean + ci95), Math.max(0, mean - ci95), mean, d.color];
+      return [d.xIndex, Math.min(1, mean + ci95), Math.max(0, mean - ci95), mean, d.color];
     });
 
     return {

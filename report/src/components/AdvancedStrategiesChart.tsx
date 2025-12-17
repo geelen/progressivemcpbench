@@ -70,10 +70,12 @@ export default function AdvancedStrategiesChart(props: Props) {
       run: RunSummary | undefined;
       color: string;
       isAdvanced: boolean;
+      xIndex: number;
     }> = [];
 
     models.forEach((model, modelIdx) => {
       BASELINE_STRATEGIES.forEach(stratId => {
+        const xIndex = xAxisData.length;
         xAxisData.push(getStrategyLabel(stratId));
         const run = runsMap.get(`${model.id}::${stratId}`);
         dataPoints.push({
@@ -82,19 +84,14 @@ export default function AdvancedStrategiesChart(props: Props) {
           run,
           color: colors.get(model.id) || MODEL_COLORS[0],
           isAdvanced: false,
+          xIndex,
         });
       });
       
-      xAxisData.push("");
-      dataPoints.push({
-        model,
-        strategy: "",
-        run: undefined,
-        color: colors.get(model.id) || MODEL_COLORS[0],
-        isAdvanced: false,
-      });
+      xAxisData.push(""); // spacer between baseline and advanced
 
       ADVANCED_STRATEGIES.forEach(stratId => {
+        const xIndex = xAxisData.length;
         xAxisData.push(getStrategyLabel(stratId));
         const run = runsMap.get(`${model.id}::${stratId}`);
         dataPoints.push({
@@ -103,18 +100,12 @@ export default function AdvancedStrategiesChart(props: Props) {
           run,
           color: colors.get(model.id) || MODEL_COLORS[0],
           isAdvanced: true,
+          xIndex,
         });
       });
 
       if (modelIdx < models.length - 1) {
-        xAxisData.push("");
-        dataPoints.push({
-          model,
-          strategy: "",
-          run: undefined,
-          color: "#fff",
-          isAdvanced: false,
-        });
+        xAxisData.push(""); // spacer between model groups
       }
     });
 
@@ -124,21 +115,21 @@ export default function AdvancedStrategiesChart(props: Props) {
   const getChartOptions = (): echarts.EChartsOption => {
     const { xAxisData, dataPoints, models } = chartData();
 
-    const customSeriesData = dataPoints.map((d, idx) => {
-      if (!d.run) return [idx, null, null, null, d.color, d.isAdvanced];
+    const customSeriesData = dataPoints.map((d) => {
+      if (!d.run) return [d.xIndex, null, null, null, d.color, d.isAdvanced];
       const mean = d.run.score.mean ?? 0;
       const stderr = d.run.score.stderr ?? 0;
       const ci95 = stderr * 1.96;
-      return [idx, Math.min(1, mean + ci95), Math.max(0, mean - ci95), mean, d.color, d.isAdvanced];
+      return [d.xIndex, Math.min(1, mean + ci95), Math.max(0, mean - ci95), mean, d.color, d.isAdvanced];
     });
 
     const modelPositions: Array<{ model: ModelConfig; center: number }> = [];
-    let currentIdx = 0;
+    let pos = 0;
     models.forEach((model, modelIdx) => {
-      const start = currentIdx;
-      currentIdx += BASELINE_STRATEGIES.length + 1 + ADVANCED_STRATEGIES.length;
-      if (modelIdx < models.length - 1) currentIdx++;
-      const end = currentIdx - 1;
+      const start = pos;
+      pos += BASELINE_STRATEGIES.length + 1 + ADVANCED_STRATEGIES.length; // +1 for spacer between baseline/advanced
+      if (modelIdx < models.length - 1) pos++; // spacer between models
+      const end = pos - 1;
       modelPositions.push({ model, center: (start + end) / 2 });
     });
 
