@@ -123,14 +123,15 @@ export default function AdvancedStrategiesChart(props: Props) {
       return [d.xIndex, Math.min(1, mean + ci95), Math.max(0, mean - ci95), mean, d.color, d.isAdvanced];
     });
 
-    const modelPositions: Array<{ model: ModelConfig; center: number }> = [];
+    // Calculate positions for separator lines between model groups
+    const separatorPositions: number[] = [];
     let pos = 0;
     models.forEach((model, modelIdx) => {
-      const start = pos;
       pos += BASELINE_STRATEGIES.length + 1 + ADVANCED_STRATEGIES.length; // +1 for spacer between baseline/advanced
-      if (modelIdx < models.length - 1) pos++; // spacer between models
-      const end = pos - 1;
-      modelPositions.push({ model, center: (start + end) / 2 });
+      if (modelIdx < models.length - 1) {
+        separatorPositions.push(pos - 0.5); // position at the spacer
+        pos++; // spacer between models
+      }
     });
 
     return {
@@ -272,18 +273,16 @@ export default function AdvancedStrategiesChart(props: Props) {
           z: 10,
         },
       ],
-      graphic: modelPositions.map(({ model, center }) => ({
-        type: "text",
-        left: `${(center / xAxisData.length) * 100 + 3}%`,
-        bottom: 5,
-        style: {
-          text: model.displayName,
-          fontSize: 11,
-          fontWeight: "bold",
-          fill: modelColorMap().get(model.id) || "#333",
-          textAlign: "center",
+      markLine: {
+        silent: true,
+        symbol: "none",
+        lineStyle: {
+          color: "#ddd",
+          type: "solid",
+          width: 1,
         },
-      })),
+        data: separatorPositions.map(x => ({ xAxis: x })),
+      },
     };
   };
 

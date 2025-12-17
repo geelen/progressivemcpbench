@@ -98,14 +98,13 @@ export default function StrategyProgressionChart(props: Props) {
   const getChartOptions = (): echarts.EChartsOption => {
     const { xAxisData, dataPoints, models } = chartData();
     
-    const modelPositions: Array<{ model: ModelConfig; start: number; end: number }> = [];
+    // Calculate positions for separator lines between model groups
+    const separatorPositions: number[] = [];
     let pos = 0;
     models.forEach((model, modelIdx) => {
-      const start = pos;
       pos += PROGRESSION_STRATEGIES.length;
-      const end = pos - 1;
-      modelPositions.push({ model, start, end });
       if (modelIdx < models.length - 1) {
+        separatorPositions.push(pos - 0.5); // position at the spacer
         pos++; // account for spacer
       }
     });
@@ -271,18 +270,16 @@ export default function StrategyProgressionChart(props: Props) {
           z: 11,
         },
       ],
-      graphic: modelPositions.map(({ model, start, end }) => ({
-        type: "text",
-        left: `${((start + end) / 2 / xAxisData.length) * 100 + 3}%`,
-        bottom: 5,
-        style: {
-          text: model.displayName,
-          fontSize: 11,
-          fontWeight: "bold",
-          fill: modelColorMap().get(model.id) || "#333",
-          textAlign: "center",
+      markLine: {
+        silent: true,
+        symbol: "none",
+        lineStyle: {
+          color: "#ddd",
+          type: "solid",
+          width: 1,
         },
-      })),
+        data: separatorPositions.map(x => ({ xAxis: x })),
+      },
     };
   };
 
