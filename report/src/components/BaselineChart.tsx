@@ -37,13 +37,15 @@ export default function BaselineChart(props: Props) {
     
     return models.map((model, idx) => {
       const run = runsMap.get(model.id);
+      const mean = run?.score.mean ?? null;
+      const std = run?.score.stdDev ?? 0;
       return {
         model,
         run,
         color: MODEL_COLORS[idx % MODEL_COLORS.length],
-        score: run?.score.mean ?? null,
-        min: run?.score.min ?? null,
-        max: run?.score.max ?? null,
+        score: mean,
+        low: mean !== null ? Math.max(0, mean - std) : null,
+        high: mean !== null ? Math.min(1, mean + std) : null,
       };
     }).filter(d => d.score !== null);
   });
@@ -67,10 +69,11 @@ export default function BaselineChart(props: Props) {
           if (!param) return "";
           const d = data[param.dataIndex];
           if (!d || !d.run) return "";
+          const stdDev = d.run.score.stdDev;
           return `
             <strong>${d.model.displayName}</strong><br/>
             Score: ${(d.score! * 100).toFixed(1)}%<br/>
-            Range: ${(d.min! * 100).toFixed(0)}% – ${(d.max! * 100).toFixed(0)}%<br/>
+            ${stdDev !== null ? `± ${(stdDev * 100).toFixed(1)}% (1 std dev)<br/>` : ""}
             Samples: ${d.run.sampleCount}
           `;
         },
@@ -175,7 +178,7 @@ export default function BaselineChart(props: Props) {
           encode: {
             x: 0,
           },
-          data: data.map((d, idx) => [idx, d.max, d.min, d.score, d.color]),
+          data: data.map((d, idx) => [idx, d.high, d.low, d.score, d.color]),
           z: 10,
         },
       ],

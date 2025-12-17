@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 import { readFile, writeFile, mkdir } from "fs/promises";
-import { dirname, basename, extname } from "path";
+import { dirname, basename, extname, resolve } from "path";
 import { parseArgs } from "util";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 import { MODELS, STRATEGIES } from "./benchConfig";
 import { METRICS, type ReportJson, type RunSummary } from "./types/report";
 import { extractEvalStats } from "./extractEvalStats";
@@ -147,7 +151,8 @@ Options:
     process.exit(1);
   }
 
-  const outputPath = values.output || "../data/reports/report.json";
+  const defaultOutput = resolve(__dirname, "../data/reports/report.json");
+  const outputPath = values.output || defaultOutput;
   const minSamples = parseInt(values["min-samples"] || "1", 10);
 
   await updateReport({

@@ -126,7 +126,9 @@ export default function AdvancedStrategiesChart(props: Props) {
 
     const customSeriesData = dataPoints.map((d, idx) => {
       if (!d.run) return [idx, null, null, null, d.color, d.isAdvanced];
-      return [idx, d.run.score.max, d.run.score.min, d.run.score.mean, d.color, d.isAdvanced];
+      const mean = d.run.score.mean ?? 0;
+      const std = d.run.score.stdDev ?? 0;
+      return [idx, Math.min(1, mean + std), Math.max(0, mean - std), mean, d.color, d.isAdvanced];
     });
 
     const modelPositions: Array<{ model: ModelConfig; center: number }> = [];
@@ -150,15 +152,16 @@ export default function AdvancedStrategiesChart(props: Props) {
       tooltip: {
         trigger: "item",
         formatter: (params: any) => {
-          const [idx, max, min, mean] = params.data;
+          const [idx, , , mean] = params.data;
           if (mean === null) return "";
           const d = dataPoints[idx];
           if (!d.run) return "";
+          const std = d.run.score.stdDev;
           return `
             <strong>${d.model.displayName}</strong><br/>
             Strategy: ${getStrategyLabel(d.strategy)}<br/>
             Score: ${(mean * 100).toFixed(1)}%<br/>
-            Range: ${(min * 100).toFixed(0)}% – ${(max * 100).toFixed(0)}%
+            ${std !== null ? `± ${(std * 100).toFixed(1)}% (1 std dev)` : ""}
           `;
         },
       },

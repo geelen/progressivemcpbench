@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2025-12-11T09:20:40.647Z",
+  "generatedAt": "2025-12-17T00:06:43.301Z",
   "source": {
-    "logsDir": "/Users/glenmaddern/src/projects/openbench/logs"
+    "logsDir": "../openbench/logs"
   },
   "dimensions": {
     "models": [
@@ -12,9 +12,9 @@
         "order": 1
       },
       {
-        "id": "groq/emberglow/small",
+        "id": "groq/emberglow/large",
         "provider": "groq",
-        "displayName": "Emberglow Small",
+        "displayName": "Emberglow Large",
         "order": 2
       },
       {
@@ -203,16 +203,17 @@
   "runs": [
     {
       "id": "groq/openai/gpt-oss-20b__minimal-servers",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-40-04+00-00_progressivemcpbench-minimal-servers_G8SqDLYzBAHmYvgf5LkjcP.eval",
+      "logPath": "../openbench/logs/2025-12-10T09-40-04+00-00_progressivemcpbench-minimal-servers_G8SqDLYzBAHmYvgf5LkjcP.eval",
       "modelId": "groq/openai/gpt-oss-20b",
       "strategyId": "minimal-servers",
       "task": "progressivemcpbench-minimal-servers",
       "sampleCount": 200,
-      "runAt": "2025-12-10T09:40:33.145Z",
+      "runAt": "2025-12-10T09:40:04.000Z",
       "score": {
         "mean": 0.905,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.2932149382279145
       },
       "time": {
         "totalSum": 269.84400000000005,
@@ -254,16 +255,17 @@
     },
     {
       "id": "groq/openai/gpt-oss-20b__directory",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-38-05+00-00_progressivemcpbench-directory_RUun8Xc3vKfhtVp5ReckMG.eval",
+      "logPath": "../openbench/logs/2025-12-10T09-38-05+00-00_progressivemcpbench-directory_RUun8Xc3vKfhtVp5ReckMG.eval",
       "modelId": "groq/openai/gpt-oss-20b",
       "strategyId": "directory",
       "task": "progressivemcpbench-directory",
       "sampleCount": 200,
-      "runAt": "2025-12-10T09:39:24.657Z",
+      "runAt": "2025-12-10T09:38:05.000Z",
       "score": {
         "mean": 0.695,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.46040742826327186
       },
       "time": {
         "totalSum": 754.1529999999999,
@@ -305,67 +307,69 @@
     },
     {
       "id": "groq/openai/gpt-oss-20b__minimal-tools",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-39-31+00-00_progressivemcpbench-minimal-tools_DKjcfkX3DhcZqPdrAds3Ua.eval",
+      "logPath": "../openbench/logs/2025-12-16T11-18-05+00-00_progressivemcpbench-minimal-tools_koj7euSA5aEM3n3fuefYUc.eval",
       "modelId": "groq/openai/gpt-oss-20b",
       "strategyId": "minimal-tools",
       "task": "progressivemcpbench-minimal-tools",
       "sampleCount": 200,
-      "runAt": "2025-12-10T09:39:59.318Z",
+      "runAt": "2025-12-16T11:18:05.000Z",
       "score": {
-        "mean": 0.895,
+        "mean": 0.945,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.22798026230355975
       },
       "time": {
-        "totalSum": 261.3069999999999,
-        "totalMean": 1.3065349999999996,
-        "totalP50": 1.1324999999999998,
-        "totalP95": 2.413,
-        "workingSum": 257.82000000000005,
-        "workingMean": 1.2891000000000004,
-        "llmHttpSum": 156.58610896137543,
-        "llmHttpMean": 0.31254712367540005,
-        "llmTimeFraction": 0.6073466331602491,
-        "toolTimeApprox": 101.23389103862462
+        "totalSum": 264.68900000000014,
+        "totalMean": 1.3234450000000006,
+        "totalP50": 1.2185000000000001,
+        "totalP95": 2.198,
+        "workingSum": 260.583,
+        "workingMean": 1.302915,
+        "llmHttpSum": 172.1648717570788,
+        "llmHttpMean": 0.34851188614793277,
+        "llmTimeFraction": 0.6606911109208152,
+        "toolTimeApprox": 88.41812824292123
       },
       "calls": {
-        "modelCalls": 505,
-        "toolCalls": 305
+        "modelCalls": 496,
+        "toolCalls": 296
       },
       "tokens": {
-        "inputSum": 479996,
-        "outputSum": 82322,
-        "totalSum": 562318,
-        "outputPerSec": 986.320413015744,
-        "inputPerSec": 27000.908518896587
+        "inputSum": 471847,
+        "outputSum": 80106,
+        "totalSum": 551953,
+        "outputPerSec": 853.950354891561,
+        "inputPerSec": 11669.290093833095
       },
       "cache": {
-        "openaiPromptSum": 479996,
-        "openaiCachedSum": 227840,
-        "openaiHitRate": 0.47467062225518547,
+        "openaiPromptSum": 471847,
+        "openaiCachedSum": 217600,
+        "openaiHitRate": 0.46116643742569097,
         "anthropicInputSum": 0,
         "anthropicCacheReadSum": 0,
         "anthropicCacheCreationSum": 0
       },
       "provider": {
-        "queueTimeMean": 0.057908754977500004,
-        "promptTimeMean": 0.03632365634250001,
-        "completionTimeMean": 0.16994070853124996,
-        "providerTimeMean": 0.2062643648737499
+        "queueTimeMean": 0.023386331143333324,
+        "promptTimeMean": 0.08331828425166668,
+        "completionTimeMean": 0.1924614804050001,
+        "providerTimeMean": 0.2757797646566667
       }
     },
     {
       "id": "groq/openai/gpt-oss-20b__distraction-128",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-41-26+00-00_progressivemcpbench-distraction-128_MJoQzs3aA5xYQmW5hmAsTS.eval",
+      "logPath": "../openbench/logs/2025-12-10T09-41-26+00-00_progressivemcpbench-distraction-128_MJoQzs3aA5xYQmW5hmAsTS.eval",
       "modelId": "groq/openai/gpt-oss-20b",
       "strategyId": "distraction-128",
       "task": "progressivemcpbench-distraction-128",
       "sampleCount": 200,
-      "runAt": "2025-12-10T09:42:14.140Z",
+      "runAt": "2025-12-10T09:41:26.000Z",
       "score": {
         "mean": 0.89,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.31288975694324056
       },
       "time": {
         "totalSum": 457.83700000000005,
@@ -407,16 +411,17 @@
     },
     {
       "id": "groq/openai/gpt-oss-20b__copilot",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-36-11+00-00_progressivemcpbench-copilot_bkkvH5EWFN9jMN4KR3C3N8.eval",
+      "logPath": "../openbench/logs/2025-12-10T09-36-11+00-00_progressivemcpbench-copilot_bkkvH5EWFN9jMN4KR3C3N8.eval",
       "modelId": "groq/openai/gpt-oss-20b",
       "strategyId": "copilot",
       "task": "progressivemcpbench-copilot",
       "sampleCount": 200,
-      "runAt": "2025-12-10T09:38:01.180Z",
+      "runAt": "2025-12-10T09:36:11.000Z",
       "score": {
         "mean": 0.695,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.46040742826327186
       },
       "time": {
         "totalSum": 1063.672,
@@ -458,67 +463,69 @@
     },
     {
       "id": "groq/openai/gpt-oss-120b__minimal-tools",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-51-16+00-00_progressivemcpbench-minimal-tools_c4xMsZqzvdfBGRxwXaDCmJ.eval",
+      "logPath": "../openbench/logs/2025-12-16T11-19-27+00-00_progressivemcpbench-minimal-tools_gF5KBbfVPHk3rLtHChaZpo.eval",
       "modelId": "groq/openai/gpt-oss-120b",
       "strategyId": "minimal-tools",
       "task": "progressivemcpbench-minimal-tools",
       "sampleCount": 200,
-      "runAt": "2025-12-10T09:51:49.765Z",
+      "runAt": "2025-12-16T11:19:27.000Z",
       "score": {
-        "mean": 0.66,
+        "mean": 0.68,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.46647615158762445
       },
       "time": {
-        "totalSum": 315.21399999999994,
-        "totalMean": 1.5760699999999996,
-        "totalP50": 1.4015,
-        "totalP95": 2.934,
-        "workingSum": 310.90499999999986,
-        "workingMean": 1.5545249999999993,
-        "llmHttpSum": 186.35061232256703,
-        "llmHttpMean": 0.3803073720868715,
-        "llmTimeFraction": 0.59938120108254,
-        "toolTimeApprox": 124.55438767743283
+        "totalSum": 305.3510000000002,
+        "totalMean": 1.5267550000000012,
+        "totalP50": 1.3375,
+        "totalP95": 2.948,
+        "workingSum": 302.4910000000001,
+        "workingMean": 1.5124550000000005,
+        "llmHttpSum": 187.78612061409513,
+        "llmHttpMean": 0.392857992916517,
+        "llmTimeFraction": 0.6207990340674435,
+        "toolTimeApprox": 114.70487938590497
       },
       "calls": {
-        "modelCalls": 549,
-        "toolCalls": 349
+        "modelCalls": 536,
+        "toolCalls": 336
       },
       "tokens": {
-        "inputSum": 441544,
-        "outputSum": 62250,
-        "totalSum": 503794,
-        "outputPerSec": 456.93288406223553,
-        "inputPerSec": 39261.157648878005
+        "inputSum": 402668,
+        "outputSum": 66240,
+        "totalSum": 468908,
+        "outputPerSec": 439.5240429879008,
+        "inputPerSec": 38972.58041561653
       },
       "cache": {
-        "openaiPromptSum": 441544,
-        "openaiCachedSum": 255232,
-        "openaiHitRate": 0.5780443172141395,
+        "openaiPromptSum": 402668,
+        "openaiCachedSum": 263680,
+        "openaiHitRate": 0.6548322687673219,
         "anthropicInputSum": 0,
         "anthropicCacheReadSum": 0,
         "anthropicCacheCreationSum": 0
       },
       "provider": {
-        "queueTimeMean": 0.01265397839508928,
-        "promptTimeMean": 0.020890060872559523,
-        "completionTimeMean": 0.25160468963755933,
-        "providerTimeMean": 0.272494750510119
+        "queueTimeMean": 0.005969646914833335,
+        "promptTimeMean": 0.019985494413083327,
+        "completionTimeMean": 0.28700760007525,
+        "providerTimeMean": 0.3069930944883334
       }
     },
     {
       "id": "groq/openai/gpt-oss-120b__minimal-servers",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-51-54+00-00_progressivemcpbench-minimal-servers_DfowMfn2zZGFcdTFKtivi3.eval",
+      "logPath": "../openbench/logs/2025-12-10T09-51-54+00-00_progressivemcpbench-minimal-servers_DfowMfn2zZGFcdTFKtivi3.eval",
       "modelId": "groq/openai/gpt-oss-120b",
       "strategyId": "minimal-servers",
       "task": "progressivemcpbench-minimal-servers",
       "sampleCount": 200,
-      "runAt": "2025-12-10T09:52:30.469Z",
+      "runAt": "2025-12-10T09:51:54.000Z",
       "score": {
         "mean": 0.615,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.48659531440407383
       },
       "time": {
         "totalSum": 338.02099999999996,
@@ -560,16 +567,17 @@
     },
     {
       "id": "groq/openai/gpt-oss-120b__directory",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-49-17+00-00_progressivemcpbench-directory_8eV94kNdArtFFuWuQVXepa.eval",
+      "logPath": "../openbench/logs/2025-12-10T09-49-17+00-00_progressivemcpbench-directory_8eV94kNdArtFFuWuQVXepa.eval",
       "modelId": "groq/openai/gpt-oss-120b",
       "strategyId": "directory",
       "task": "progressivemcpbench-directory",
       "sampleCount": 200,
-      "runAt": "2025-12-10T09:51:07.811Z",
+      "runAt": "2025-12-10T09:49:17.000Z",
       "score": {
         "mean": 0.76,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.427083130081253
       },
       "time": {
         "totalSum": 1076.4260000000006,
@@ -611,16 +619,17 @@
     },
     {
       "id": "groq/openai/gpt-oss-120b__distraction-128",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-53-29+00-00_progressivemcpbench-distraction-128_eyd5Mcuy6whHAiinDqThbm.eval",
+      "logPath": "../openbench/logs/2025-12-10T09-53-29+00-00_progressivemcpbench-distraction-128_eyd5Mcuy6whHAiinDqThbm.eval",
       "modelId": "groq/openai/gpt-oss-120b",
       "strategyId": "distraction-128",
       "task": "progressivemcpbench-distraction-128",
       "sampleCount": 200,
-      "runAt": "2025-12-10T09:54:22.495Z",
+      "runAt": "2025-12-10T09:53:29.000Z",
       "score": {
         "mean": 0.445,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.4969657935914711
       },
       "time": {
         "totalSum": 511.80899999999986,
@@ -662,67 +671,69 @@
     },
     {
       "id": "groq/minimaxai/minimax-m2__minimal-tools",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T10-13-51+00-00_progressivemcpbench-minimal-tools_36FJAr4WmMWYGGpAc7JMAj.eval",
+      "logPath": "../openbench/logs/2025-12-16T23-39-35+00-00_progressivemcpbench-minimal-tools_DTNxFs4cRJAMgy4mG6vD56.eval",
       "modelId": "groq/minimaxai/minimax-m2",
       "strategyId": "minimal-tools",
       "task": "progressivemcpbench-minimal-tools",
       "sampleCount": 200,
-      "runAt": "2025-12-10T10:15:47.301Z",
+      "runAt": "2025-12-16T23:39:35.000Z",
       "score": {
-        "mean": 0.605,
+        "mean": 0.565,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.4957569969249052
       },
       "time": {
-        "totalSum": 628.1030000000001,
-        "totalMean": 3.140515,
-        "totalP50": 2.6955,
-        "totalP95": 6.935,
-        "workingSum": 624.3049999999998,
-        "workingMean": 3.121524999999999,
-        "llmHttpSum": 488.70457373862155,
-        "llmHttpMean": 1.09329882268148,
-        "llmTimeFraction": 0.7827977891232998,
-        "toolTimeApprox": 135.6004262613783
+        "totalSum": 731.065,
+        "totalMean": 3.6553250000000004,
+        "totalP50": 3.0694999999999997,
+        "totalP95": 10.589,
+        "workingSum": 728.216,
+        "workingMean": 3.64108,
+        "llmHttpSum": 612.921733037685,
+        "llmHttpMean": 1.409015478247552,
+        "llmTimeFraction": 0.8416757295056481,
+        "toolTimeApprox": 115.29426696231496
       },
       "calls": {
-        "modelCalls": 506,
-        "toolCalls": 345
+        "modelCalls": 491,
+        "toolCalls": 328
       },
       "tokens": {
-        "inputSum": 1194458,
-        "outputSum": 150447,
-        "totalSum": 1344905,
-        "outputPerSec": 458.1130586985113,
-        "inputPerSec": 22416.116189696324
+        "inputSum": 1219477,
+        "outputSum": 176540,
+        "totalSum": 1396017,
+        "outputPerSec": 369.33728187285175,
+        "inputPerSec": 39531.163031533295
       },
       "cache": {
-        "openaiPromptSum": 1194458,
-        "openaiCachedSum": 0,
-        "openaiHitRate": 0,
+        "openaiPromptSum": 1219477,
+        "openaiCachedSum": 979712,
+        "openaiHitRate": 0.8033870257495631,
         "anthropicInputSum": 0,
         "anthropicCacheReadSum": 0,
         "anthropicCacheCreationSum": 0
       },
       "provider": {
-        "queueTimeMean": 0.123587696285,
-        "promptTimeMean": 0.06156219755233333,
-        "completionTimeMean": 0.623084915422583,
-        "providerTimeMean": 0.6846471129749168
+        "queueTimeMean": 0.13891793413954245,
+        "promptTimeMean": 0.05757946216592989,
+        "completionTimeMean": 0.7984886982206387,
+        "providerTimeMean": 0.8560681603865692
       }
     },
     {
       "id": "groq/minimaxai/minimax-m2__minimal-servers",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T10-15-51+00-00_progressivemcpbench-minimal-servers_8SpTEEp78dq5bHaXMB3mq3.eval",
+      "logPath": "../openbench/logs/2025-12-10T10-15-51+00-00_progressivemcpbench-minimal-servers_8SpTEEp78dq5bHaXMB3mq3.eval",
       "modelId": "groq/minimaxai/minimax-m2",
       "strategyId": "minimal-servers",
       "task": "progressivemcpbench-minimal-servers",
       "sampleCount": 200,
-      "runAt": "2025-12-10T10:17:24.858Z",
+      "runAt": "2025-12-10T10:15:51.000Z",
       "score": {
         "mean": 0.49,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.4998999899979993
       },
       "time": {
         "totalSum": 821.9270000000005,
@@ -764,16 +775,17 @@
     },
     {
       "id": "groq/minimaxai/minimax-m2__directory",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-57-37+00-00_progressivemcpbench-directory_3dvS23V8cwiTdKM7Ttdvnd.eval",
+      "logPath": "../openbench/logs/2025-12-10T09-57-37+00-00_progressivemcpbench-directory_3dvS23V8cwiTdKM7Ttdvnd.eval",
       "modelId": "groq/minimaxai/minimax-m2",
       "strategyId": "directory",
       "task": "progressivemcpbench-directory",
       "sampleCount": 200,
-      "runAt": "2025-12-10T10:13:42.570Z",
+      "runAt": "2025-12-10T09:57:37.000Z",
       "score": {
         "mean": 0.79,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.4073082370883261
       },
       "time": {
         "totalSum": 1805.142,
@@ -815,16 +827,17 @@
     },
     {
       "id": "groq/minimaxai/minimax-m2__distraction-128",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T10-22-06+00-00_progressivemcpbench-distraction-128_UnksjK4XFFGWHYvBrrAuHp.eval",
+      "logPath": "../openbench/logs/2025-12-10T10-22-06+00-00_progressivemcpbench-distraction-128_UnksjK4XFFGWHYvBrrAuHp.eval",
       "modelId": "groq/minimaxai/minimax-m2",
       "strategyId": "distraction-128",
       "task": "progressivemcpbench-distraction-128",
       "sampleCount": 200,
-      "runAt": "2025-12-10T10:28:59.999Z",
+      "runAt": "2025-12-10T10:22:06.000Z",
       "score": {
         "mean": 0.47,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.49909918853871166
       },
       "time": {
         "totalSum": 3819.049,
@@ -866,16 +879,17 @@
     },
     {
       "id": "openai/gpt-5.1__directory",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T11-47-54+00-00_progressivemcpbench-directory_dtozjhgcUGUF8VQRwku6TW.eval",
+      "logPath": "../openbench/logs/2025-12-10T11-47-54+00-00_progressivemcpbench-directory_dtozjhgcUGUF8VQRwku6TW.eval",
       "modelId": "openai/gpt-5.1",
       "strategyId": "directory",
       "task": "progressivemcpbench-directory",
       "sampleCount": 200,
-      "runAt": "2025-12-10T11:51:12.389Z",
+      "runAt": "2025-12-10T11:47:54.000Z",
       "score": {
         "mean": 0.82,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.3841874542459707
       },
       "time": {
         "totalSum": 1907.1079999999986,
@@ -917,16 +931,17 @@
     },
     {
       "id": "anthropic/claude-haiku-4-5-20251001__directory",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T12-05-12+00-00_progressivemcpbench-directory_JzUP9xGZRVDMmQedSwPx8u.eval",
+      "logPath": "../openbench/logs/2025-12-10T12-05-12+00-00_progressivemcpbench-directory_JzUP9xGZRVDMmQedSwPx8u.eval",
       "modelId": "anthropic/claude-haiku-4-5-20251001",
       "strategyId": "directory",
       "task": "progressivemcpbench-directory",
       "sampleCount": 200,
-      "runAt": "2025-12-10T12:10:17.301Z",
+      "runAt": "2025-12-10T12:05:12.000Z",
       "score": {
         "mean": 0.895,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.30655342111938666
       },
       "time": {
         "totalSum": 2944.126,
@@ -968,16 +983,17 @@
     },
     {
       "id": "anthropic/claude-haiku-4-5-20251001__distraction-128",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T12-16-39+00-00_progressivemcpbench-distraction-128_gcAmUJUMV4Vd7JWmwEf7wR.eval",
+      "logPath": "../openbench/logs/2025-12-10T12-16-39+00-00_progressivemcpbench-distraction-128_gcAmUJUMV4Vd7JWmwEf7wR.eval",
       "modelId": "anthropic/claude-haiku-4-5-20251001",
       "strategyId": "distraction-128",
       "task": "progressivemcpbench-distraction-128",
       "sampleCount": 200,
-      "runAt": "2025-12-10T12:18:51.968Z",
+      "runAt": "2025-12-10T12:16:39.000Z",
       "score": {
         "mean": 0.945,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.22798026230355942
       },
       "time": {
         "totalSum": 1257.4320000000005,
@@ -1019,16 +1035,17 @@
     },
     {
       "id": "google/gemini-3.0-pro-preview__directory",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-11-26T11-14-04+11-00_progressivemcpbench-directory_GmeaZxr67AvLyb5q4C4FdG.eval",
+      "logPath": "../openbench/logs/2025-11-26T11-14-04+11-00_progressivemcpbench-directory_GmeaZxr67AvLyb5q4C4FdG.eval",
       "modelId": "google/gemini-3.0-pro-preview",
       "strategyId": "directory",
       "task": "progressivemcpbench-directory",
       "sampleCount": 50,
-      "runAt": "2025-11-26T00:14:20.988Z",
+      "runAt": "2025-11-26T00:14:04.000Z",
       "score": {
         "mean": 0,
         "min": 0,
-        "max": 0
+        "max": 0,
+        "stdDev": 0
       },
       "time": {
         "totalSum": 163.69099999999997,
@@ -1070,31 +1087,32 @@
     },
     {
       "id": "google/gemini-3-pro-preview__directory",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T13-55-12+00-00_progressivemcpbench-directory_hg5jYCGJEgYEFaVKNjwpua.eval",
+      "logPath": "../openbench/logs/2025-12-11T10-09-32+00-00_progressivemcpbench-directory_m73xi2CEZQ6EJqiTz6aLQm.eval",
       "modelId": "google/gemini-3-pro-preview",
       "strategyId": "directory",
       "task": "progressivemcpbench-directory",
-      "sampleCount": 200,
-      "runAt": "2025-12-10T14:15:16.285Z",
+      "sampleCount": 180,
+      "runAt": "2025-12-11T10:09:32.000Z",
       "score": {
         "mean": 0,
         "min": 0,
-        "max": 0
+        "max": 0,
+        "stdDev": 0
       },
       "time": {
-        "totalSum": 12032.497000000003,
-        "totalMean": 60.16248500000002,
-        "totalP50": 60.1465,
-        "totalP95": 60.315,
-        "workingSum": 12030.686999999998,
-        "workingMean": 60.15343499999999,
+        "totalSum": 10834.485,
+        "totalMean": 60.191583333333334,
+        "totalP50": 60.1525,
+        "totalP95": 60.384,
+        "workingSum": 10832.651999999995,
+        "workingMean": 60.18139999999997,
         "llmHttpSum": 0,
         "llmHttpMean": null,
         "llmTimeFraction": 0,
-        "toolTimeApprox": 12030.686999999998
+        "toolTimeApprox": 10832.651999999995
       },
       "calls": {
-        "modelCalls": 1000,
+        "modelCalls": 900,
         "toolCalls": 0
       },
       "tokens": {
@@ -1121,16 +1139,17 @@
     },
     {
       "id": "groq/openai/gpt-oss-120b__copilot",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-44-54+00-00_progressivemcpbench-copilot_nC3PMszMiU3zkt5fe7PKGc.eval",
+      "logPath": "../openbench/logs/2025-12-10T09-44-54+00-00_progressivemcpbench-copilot_nC3PMszMiU3zkt5fe7PKGc.eval",
       "modelId": "groq/openai/gpt-oss-120b",
       "strategyId": "copilot",
       "task": "progressivemcpbench-copilot",
       "sampleCount": 200,
-      "runAt": "2025-12-10T09:49:11.053Z",
+      "runAt": "2025-12-10T09:44:54.000Z",
       "score": {
         "mean": 0.55,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.4974937185533103
       },
       "time": {
         "totalSum": 1787.3700000000006,
@@ -1172,16 +1191,17 @@
     },
     {
       "id": "groq/minimaxai/minimax-m2__copilot",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-54-35+00-00_progressivemcpbench-copilot_QKHr6jgNFUqq7yTHVUcvLA.eval",
+      "logPath": "../openbench/logs/2025-12-10T09-54-35+00-00_progressivemcpbench-copilot_QKHr6jgNFUqq7yTHVUcvLA.eval",
       "modelId": "groq/minimaxai/minimax-m2",
       "strategyId": "copilot",
       "task": "progressivemcpbench-copilot",
       "sampleCount": 200,
-      "runAt": "2025-12-10T09:57:30.015Z",
+      "runAt": "2025-12-10T09:54:35.000Z",
       "score": {
         "mean": 0.26,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.4386342439892256
       },
       "time": {
         "totalSum": 1573.0489999999998,
@@ -1223,67 +1243,69 @@
     },
     {
       "id": "groq/moonshotai/kimi-k2-instruct-0905__minimal-tools",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T10-31-56+00-00_progressivemcpbench-minimal-tools_dhGz4zHkNM8wTencfshrjZ.eval",
+      "logPath": "../openbench/logs/2025-12-16T11-22-13+00-00_progressivemcpbench-minimal-tools_QXqSUHZaJUs68WmYLb3wqz.eval",
       "modelId": "groq/moonshotai/kimi-k2-instruct-0905",
       "strategyId": "minimal-tools",
       "task": "progressivemcpbench-minimal-tools",
       "sampleCount": 200,
-      "runAt": "2025-12-10T10:32:21.767Z",
+      "runAt": "2025-12-16T11:22:13.000Z",
       "score": {
-        "mean": 0.58,
+        "mean": 0.65,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.4769696007084729
       },
       "time": {
-        "totalSum": 239.96000000000004,
-        "totalMean": 1.1998000000000002,
-        "totalP50": 1.2755,
-        "totalP95": 1.873,
-        "workingSum": 237.08799999999997,
-        "workingMean": 1.1854399999999998,
-        "llmHttpSum": 136.97795829828829,
-        "llmHttpMean": 0.3512255340981751,
-        "llmTimeFraction": 0.5777515449887312,
-        "toolTimeApprox": 100.11004170171168
+        "totalSum": 215.89899999999992,
+        "totalMean": 1.0794949999999996,
+        "totalP50": 1.046,
+        "totalP95": 1.756,
+        "workingSum": 213.192,
+        "workingMean": 1.06596,
+        "llmHttpSum": 130.13222584903997,
+        "llmHttpMean": 0.3424532259185262,
+        "llmTimeFraction": 0.6103991981361401,
+        "toolTimeApprox": 83.05977415096004
       },
       "calls": {
-        "modelCalls": 390,
-        "toolCalls": 234
+        "modelCalls": 380,
+        "toolCalls": 212
       },
       "tokens": {
-        "inputSum": 350398,
-        "outputSum": 11600,
-        "totalSum": 361998,
-        "outputPerSec": 384.12712393958554,
-        "inputPerSec": 21685.025029273223
+        "inputSum": 339721,
+        "outputSum": 11208,
+        "totalSum": 350929,
+        "outputPerSec": 363.32014267755085,
+        "inputPerSec": 23621.217751346205
       },
       "cache": {
-        "openaiPromptSum": 350398,
-        "openaiCachedSum": 222464,
-        "openaiHitRate": 0.6348894685471949,
+        "openaiPromptSum": 339721,
+        "openaiCachedSum": 246272,
+        "openaiHitRate": 0.7249242760971503,
         "anthropicInputSum": 0,
         "anthropicCacheReadSum": 0,
         "anthropicCacheCreationSum": 0
       },
       "provider": {
-        "queueTimeMean": 0.16864796412916658,
-        "promptTimeMean": 0.041558473093333326,
-        "completionTimeMean": 0.07326240967916671,
-        "providerTimeMean": 0.11482088277249992
+        "queueTimeMean": 0.17532708619841675,
+        "promptTimeMean": 0.0339369470985,
+        "completionTimeMean": 0.07597095231100005,
+        "providerTimeMean": 0.10990789940950002
       }
     },
     {
       "id": "groq/moonshotai/kimi-k2-instruct-0905__minimal-servers",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T10-32-25+00-00_progressivemcpbench-minimal-servers_FBxgatQVsqNoZyGCqU5Mt3.eval",
+      "logPath": "../openbench/logs/2025-12-10T10-32-25+00-00_progressivemcpbench-minimal-servers_FBxgatQVsqNoZyGCqU5Mt3.eval",
       "modelId": "groq/moonshotai/kimi-k2-instruct-0905",
       "strategyId": "minimal-servers",
       "task": "progressivemcpbench-minimal-servers",
       "sampleCount": 200,
-      "runAt": "2025-12-10T10:32:56.563Z",
+      "runAt": "2025-12-10T10:32:25.000Z",
       "score": {
         "mean": 0.68,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.4664761515876244
       },
       "time": {
         "totalSum": 292.95600000000013,
@@ -1325,16 +1347,17 @@
     },
     {
       "id": "groq/moonshotai/kimi-k2-instruct-0905__directory",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T10-30-23+00-00_progressivemcpbench-directory_AnPmi2HihpzLX95sL7xtyb.eval",
+      "logPath": "../openbench/logs/2025-12-10T10-30-23+00-00_progressivemcpbench-directory_AnPmi2HihpzLX95sL7xtyb.eval",
       "modelId": "groq/moonshotai/kimi-k2-instruct-0905",
       "strategyId": "directory",
       "task": "progressivemcpbench-directory",
       "sampleCount": 200,
-      "runAt": "2025-12-10T10:31:51.832Z",
+      "runAt": "2025-12-10T10:30:23.000Z",
       "score": {
         "mean": 0.525,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.4993746088859547
       },
       "time": {
         "totalSum": 842.2660000000001,
@@ -1376,16 +1399,17 @@
     },
     {
       "id": "groq/moonshotai/kimi-k2-instruct-0905__copilot",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T10-29-16+00-00_progressivemcpbench-copilot_KPTLc4y5s3bfnitVWMRV6d.eval",
+      "logPath": "../openbench/logs/2025-12-10T10-29-16+00-00_progressivemcpbench-copilot_KPTLc4y5s3bfnitVWMRV6d.eval",
       "modelId": "groq/moonshotai/kimi-k2-instruct-0905",
       "strategyId": "copilot",
       "task": "progressivemcpbench-copilot",
       "sampleCount": 200,
-      "runAt": "2025-12-10T10:30:20.361Z",
+      "runAt": "2025-12-10T10:29:16.000Z",
       "score": {
         "mean": 0.1,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.30000000000000004
       },
       "time": {
         "totalSum": 609.077,
@@ -1427,16 +1451,17 @@
     },
     {
       "id": "groq/moonshotai/kimi-k2-instruct-0905__distraction-128",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T10-34-09+00-00_progressivemcpbench-distraction-128_TW4Gn6wJGmNwpgeaEpM469.eval",
+      "logPath": "../openbench/logs/2025-12-10T10-34-09+00-00_progressivemcpbench-distraction-128_TW4Gn6wJGmNwpgeaEpM469.eval",
       "modelId": "groq/moonshotai/kimi-k2-instruct-0905",
       "strategyId": "distraction-128",
       "task": "progressivemcpbench-distraction-128",
       "sampleCount": 200,
-      "runAt": "2025-12-10T10:41:52.638Z",
+      "runAt": "2025-12-10T10:34:09.000Z",
       "score": {
         "mean": 0.705,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.4560427611529425
       },
       "time": {
         "totalSum": 1151.6119999999999,
@@ -1478,37 +1503,38 @@
     },
     {
       "id": "openai/gpt-5-nano__minimal-tools",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T11-08-26+00-00_progressivemcpbench-minimal-tools_hBbxWMVhzmyF2K36denmNN.eval",
+      "logPath": "../openbench/logs/2025-12-16T11-22-39+00-00_progressivemcpbench-minimal-tools_mHGPCSEZeyHnkNGwN5yawZ.eval",
       "modelId": "openai/gpt-5-nano",
       "strategyId": "minimal-tools",
       "task": "progressivemcpbench-minimal-tools",
       "sampleCount": 200,
-      "runAt": "2025-12-10T11:17:15.069Z",
+      "runAt": "2025-12-16T11:22:39.000Z",
       "score": {
-        "mean": 0.84,
+        "mean": 0.835,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.37118054905934983
       },
       "time": {
-        "totalSum": 4860.763,
-        "totalMean": 24.303815,
-        "totalP50": 20.674500000000002,
-        "totalP95": 53.759,
-        "workingSum": 4784.702000000001,
-        "workingMean": 23.923510000000007,
-        "llmHttpSum": 4603.104035629192,
-        "llmHttpMean": 9.336925021560228,
-        "llmTimeFraction": 0.9620461286051234,
-        "toolTimeApprox": 181.59796437080877
+        "totalSum": 5014.153000000002,
+        "totalMean": 25.07076500000001,
+        "totalP50": 21.024,
+        "totalP95": 52.426,
+        "workingSum": 4964.952000000002,
+        "workingMean": 24.824760000000012,
+        "llmHttpSum": 4742.654344042981,
+        "llmHttpMean": 9.83953183411407,
+        "llmTimeFraction": 0.9552266253617315,
+        "toolTimeApprox": 222.29765595702065
       },
       "calls": {
-        "modelCalls": 495,
-        "toolCalls": 364
+        "modelCalls": 485,
+        "toolCalls": 367
       },
       "tokens": {
-        "inputSum": 611450,
-        "outputSum": 265350,
-        "totalSum": 876800,
+        "inputSum": 582429,
+        "outputSum": 261568,
+        "totalSum": 843997,
         "outputPerSec": null,
         "inputPerSec": null
       },
@@ -1529,16 +1555,17 @@
     },
     {
       "id": "openai/gpt-5-nano__minimal-servers",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T11-17-20+00-00_progressivemcpbench-minimal-servers_4BWjT9DmwmxbDQEmYRhH6Q.eval",
+      "logPath": "../openbench/logs/2025-12-10T11-17-20+00-00_progressivemcpbench-minimal-servers_4BWjT9DmwmxbDQEmYRhH6Q.eval",
       "modelId": "openai/gpt-5-nano",
       "strategyId": "minimal-servers",
       "task": "progressivemcpbench-minimal-servers",
       "sampleCount": 200,
-      "runAt": "2025-12-10T11:26:01.816Z",
+      "runAt": "2025-12-10T11:17:20.000Z",
       "score": {
         "mean": 0.855,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.3521008378291654
       },
       "time": {
         "totalSum": 4936.678000000001,
@@ -1580,16 +1607,17 @@
     },
     {
       "id": "openai/gpt-5-nano__directory",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T10-55-02+00-00_progressivemcpbench-directory_G2yMSTCXXRD8f68VXcK2pH.eval",
+      "logPath": "../openbench/logs/2025-12-10T10-55-02+00-00_progressivemcpbench-directory_G2yMSTCXXRD8f68VXcK2pH.eval",
       "modelId": "openai/gpt-5-nano",
       "strategyId": "directory",
       "task": "progressivemcpbench-directory",
       "sampleCount": 200,
-      "runAt": "2025-12-10T11:08:19.664Z",
+      "runAt": "2025-12-10T10:55:02.000Z",
       "score": {
         "mean": 0.7,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.4582575694955844
       },
       "time": {
         "totalSum": 7823.774999999997,
@@ -1631,16 +1659,17 @@
     },
     {
       "id": "openai/gpt-5-nano__copilot",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T10-42-09+00-00_progressivemcpbench-copilot_gV5886DQv2nBhV9RKzJ7Z4.eval",
+      "logPath": "../openbench/logs/2025-12-10T10-42-09+00-00_progressivemcpbench-copilot_gV5886DQv2nBhV9RKzJ7Z4.eval",
       "modelId": "openai/gpt-5-nano",
       "strategyId": "copilot",
       "task": "progressivemcpbench-copilot",
       "sampleCount": 200,
-      "runAt": "2025-12-10T10:54:56.698Z",
+      "runAt": "2025-12-10T10:42:09.000Z",
       "score": {
         "mean": 0.67,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.4702127178203497
       },
       "time": {
         "totalSum": 7412.256000000001,
@@ -1682,16 +1711,17 @@
     },
     {
       "id": "openai/gpt-5-nano__distraction-128",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T11-35-04+00-00_progressivemcpbench-distraction-128_Fnk2bSyeepPmYtKod5aCH4.eval",
+      "logPath": "../openbench/logs/2025-12-10T11-35-04+00-00_progressivemcpbench-distraction-128_Fnk2bSyeepPmYtKod5aCH4.eval",
       "modelId": "openai/gpt-5-nano",
       "strategyId": "distraction-128",
       "task": "progressivemcpbench-distraction-128",
       "sampleCount": 200,
-      "runAt": "2025-12-10T11:44:26.147Z",
+      "runAt": "2025-12-10T11:35:04.000Z",
       "score": {
         "mean": 0.875,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.33071891388307384
       },
       "time": {
         "totalSum": 5343.402000000001,
@@ -1733,37 +1763,38 @@
     },
     {
       "id": "openai/gpt-5.1__minimal-tools",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T11-51-18+00-00_progressivemcpbench-minimal-tools_Wnri6aMfwkkrF5ZM2wF6HR.eval",
+      "logPath": "../openbench/logs/2025-12-16T11-31-24+00-00_progressivemcpbench-minimal-tools_oPnTHkP6mu9RM7CXtXNMbd.eval",
       "modelId": "openai/gpt-5.1",
       "strategyId": "minimal-tools",
       "task": "progressivemcpbench-minimal-tools",
       "sampleCount": 200,
-      "runAt": "2025-12-10T11:52:47.161Z",
+      "runAt": "2025-12-16T11:31:24.000Z",
       "score": {
-        "mean": 0.87,
+        "mean": 0.85,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.3570714214271432
       },
       "time": {
-        "totalSum": 833.0269999999999,
-        "totalMean": 4.165134999999999,
-        "totalP50": 3.909,
-        "totalP95": 6.591,
-        "workingSum": 816.4219999999999,
-        "workingMean": 4.082109999999999,
-        "llmHttpSum": 707.9067210692447,
-        "llmHttpMean": 1.4934740950827947,
-        "llmTimeFraction": 0.8670843277976888,
-        "toolTimeApprox": 108.51527893075524
+        "totalSum": 763.514,
+        "totalMean": 3.81757,
+        "totalP50": 3.567,
+        "totalP95": 6.088,
+        "workingSum": 743.0200000000002,
+        "workingMean": 3.715100000000001,
+        "llmHttpSum": 652.6842149950389,
+        "llmHttpMean": 1.3711853256198296,
+        "llmTimeFraction": 0.8784207894740905,
+        "toolTimeApprox": 90.33578500496128
       },
       "calls": {
-        "modelCalls": 474,
-        "toolCalls": 339
+        "modelCalls": 476,
+        "toolCalls": 334
       },
       "tokens": {
-        "inputSum": 418790,
-        "outputSum": 19912,
-        "totalSum": 438702,
+        "inputSum": 419672,
+        "outputSum": 19569,
+        "totalSum": 439241,
         "outputPerSec": null,
         "inputPerSec": null
       },
@@ -1784,16 +1815,17 @@
     },
     {
       "id": "openai/gpt-5.1__minimal-servers",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T11-52-52+00-00_progressivemcpbench-minimal-servers_m9vAfvDYii558rLe5UkXdR.eval",
+      "logPath": "../openbench/logs/2025-12-10T11-52-52+00-00_progressivemcpbench-minimal-servers_m9vAfvDYii558rLe5UkXdR.eval",
       "modelId": "openai/gpt-5.1",
       "strategyId": "minimal-servers",
       "task": "progressivemcpbench-minimal-servers",
       "sampleCount": 200,
-      "runAt": "2025-12-10T11:54:22.130Z",
+      "runAt": "2025-12-10T11:52:52.000Z",
       "score": {
         "mean": 0.84,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.36660605559646775
       },
       "time": {
         "totalSum": 873.4729999999997,
@@ -1835,16 +1867,17 @@
     },
     {
       "id": "openai/gpt-5.1__copilot",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T11-44-44+00-00_progressivemcpbench-copilot_mVzz9hVPjtiQvqkkFjvGD8.eval",
+      "logPath": "../openbench/logs/2025-12-10T11-44-44+00-00_progressivemcpbench-copilot_mVzz9hVPjtiQvqkkFjvGD8.eval",
       "modelId": "openai/gpt-5.1",
       "strategyId": "copilot",
       "task": "progressivemcpbench-copilot",
       "sampleCount": 200,
-      "runAt": "2025-12-10T11:47:50.689Z",
+      "runAt": "2025-12-10T11:44:44.000Z",
       "score": {
         "mean": 0.755,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.4300872004605578
       },
       "time": {
         "totalSum": 1820.4120000000007,
@@ -1886,16 +1919,17 @@
     },
     {
       "id": "openai/gpt-5.1__distraction-128",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T11-57-02+00-00_progressivemcpbench-distraction-128_CUMY5dGdCvf2AjN9mukNpy.eval",
+      "logPath": "../openbench/logs/2025-12-10T11-57-02+00-00_progressivemcpbench-distraction-128_CUMY5dGdCvf2AjN9mukNpy.eval",
       "modelId": "openai/gpt-5.1",
       "strategyId": "distraction-128",
       "task": "progressivemcpbench-distraction-128",
       "sampleCount": 200,
-      "runAt": "2025-12-10T12:00:08.987Z",
+      "runAt": "2025-12-10T11:57:02.000Z",
       "score": {
         "mean": 0.84,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.36660605559646775
       },
       "time": {
         "totalSum": 1768.413999999999,
@@ -1937,37 +1971,38 @@
     },
     {
       "id": "anthropic/claude-haiku-4-5-20251001__minimal-tools",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T12-10-23+00-00_progressivemcpbench-minimal-tools_SDzkorXHihzumsSCSpW9nF.eval",
+      "logPath": "../openbench/logs/2025-12-16T11-32-47+00-00_progressivemcpbench-minimal-tools_RkskNtDfiiMZado7y8hy4b.eval",
       "modelId": "anthropic/claude-haiku-4-5-20251001",
       "strategyId": "minimal-tools",
       "task": "progressivemcpbench-minimal-tools",
       "sampleCount": 200,
-      "runAt": "2025-12-10T12:12:09.576Z",
+      "runAt": "2025-12-16T11:32:47.000Z",
       "score": {
-        "mean": 0.915,
+        "mean": 0.89,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.31288975694324056
       },
       "time": {
-        "totalSum": 1018.3430000000001,
-        "totalMean": 5.091715000000001,
-        "totalP50": 4.8905,
-        "totalP95": 8.725,
-        "workingSum": 1013.4329999999999,
-        "workingMean": 5.067164999999999,
-        "llmHttpSum": 914.1440392124932,
-        "llmHttpMean": 1.873245981992814,
-        "llmTimeFraction": 0.9020271090565368,
-        "toolTimeApprox": 99.28896078750665
+        "totalSum": 1010.5250000000007,
+        "totalMean": 5.0526250000000035,
+        "totalP50": 4.9545,
+        "totalP95": 7.726,
+        "workingSum": 1004.6079999999997,
+        "workingMean": 5.023039999999998,
+        "llmHttpSum": 913.0028082379722,
+        "llmHttpMean": 1.8556967647113256,
+        "llmTimeFraction": 0.9088149887697216,
+        "toolTimeApprox": 91.60519176202752
       },
       "calls": {
-        "modelCalls": 488,
-        "toolCalls": 358
+        "modelCalls": 492,
+        "toolCalls": 363
       },
       "tokens": {
-        "inputSum": 746335,
-        "outputSum": 55046,
-        "totalSum": 891614,
+        "inputSum": 751343,
+        "outputSum": 53865,
+        "totalSum": 895423,
         "outputPerSec": null,
         "inputPerSec": null
       },
@@ -1975,9 +2010,9 @@
         "openaiPromptSum": 0,
         "openaiCachedSum": 0,
         "openaiHitRate": null,
-        "anthropicInputSum": 746335,
-        "anthropicCacheReadSum": 63160,
-        "anthropicCacheCreationSum": 27073
+        "anthropicInputSum": 751343,
+        "anthropicCacheReadSum": 72172,
+        "anthropicCacheCreationSum": 18043
       },
       "provider": {
         "queueTimeMean": 0,
@@ -1988,16 +2023,17 @@
     },
     {
       "id": "anthropic/claude-haiku-4-5-20251001__minimal-servers",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T12-12-13+00-00_progressivemcpbench-minimal-servers_n88sAwNz8g5dpVFUyRa8ho.eval",
+      "logPath": "../openbench/logs/2025-12-10T12-12-13+00-00_progressivemcpbench-minimal-servers_n88sAwNz8g5dpVFUyRa8ho.eval",
       "modelId": "anthropic/claude-haiku-4-5-20251001",
       "strategyId": "minimal-servers",
       "task": "progressivemcpbench-minimal-servers",
       "sampleCount": 200,
-      "runAt": "2025-12-10T12:14:16.923Z",
+      "runAt": "2025-12-10T12:12:13.000Z",
       "score": {
         "mean": 0.9,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.2999999999999999
       },
       "time": {
         "totalSum": 1195.0529999999994,
@@ -2039,16 +2075,17 @@
     },
     {
       "id": "anthropic/claude-haiku-4-5-20251001__copilot",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T12-00-24+00-00_progressivemcpbench-copilot_9v3ZsY4mhdGgjAHEWXZhch.eval",
+      "logPath": "../openbench/logs/2025-12-10T12-00-24+00-00_progressivemcpbench-copilot_9v3ZsY4mhdGgjAHEWXZhch.eval",
       "modelId": "anthropic/claude-haiku-4-5-20251001",
       "strategyId": "copilot",
       "task": "progressivemcpbench-copilot",
       "sampleCount": 200,
-      "runAt": "2025-12-10T12:05:07.501Z",
+      "runAt": "2025-12-10T12:00:24.000Z",
       "score": {
         "mean": 0.92,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.2712931993250102
       },
       "time": {
         "totalSum": 2733.794000000001,
@@ -2090,37 +2127,38 @@
     },
     {
       "id": "anthropic/claude-sonnet-4-5-20250929__minimal-tools",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T12-37-21+00-00_progressivemcpbench-minimal-tools_bY23zvnBm5WVQWi38hP9Gs.eval",
+      "logPath": "../openbench/logs/2025-12-16T11-34-36+00-00_progressivemcpbench-minimal-tools_noyfTDLb4MWViCXDWjmekT.eval",
       "modelId": "anthropic/claude-sonnet-4-5-20250929",
       "strategyId": "minimal-tools",
       "task": "progressivemcpbench-minimal-tools",
       "sampleCount": 200,
-      "runAt": "2025-12-10T12:41:14.261Z",
+      "runAt": "2025-12-16T11:34:36.000Z",
       "score": {
-        "mean": 0.925,
+        "mean": 0.905,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.29321493822791506
       },
       "time": {
-        "totalSum": 2278.062999999999,
-        "totalMean": 11.390314999999996,
-        "totalP50": 10.784500000000001,
-        "totalP95": 20.948,
-        "workingSum": 2272.1459999999984,
-        "workingMean": 11.360729999999991,
-        "llmHttpSum": 2171.8947799021844,
-        "llmHttpMean": 4.309315039488461,
-        "llmTimeFraction": 0.9558781785599103,
-        "toolTimeApprox": 100.25122009781398
+        "totalSum": 2086.618,
+        "totalMean": 10.43309,
+        "totalP50": 9.724499999999999,
+        "totalP95": 18.979,
+        "workingSum": 2078.977,
+        "workingMean": 10.394884999999999,
+        "llmHttpSum": 1982.1213675750769,
+        "llmHttpMean": 3.90181371569897,
+        "llmTimeFraction": 0.9534118788111061,
+        "toolTimeApprox": 96.85563242492299
       },
       "calls": {
-        "modelCalls": 504,
-        "toolCalls": 360
+        "modelCalls": 508,
+        "toolCalls": 366
       },
       "tokens": {
-        "inputSum": 136773,
-        "outputSum": 55283,
-        "totalSum": 928455,
+        "inputSum": 136793,
+        "outputSum": 56023,
+        "totalSum": 939901,
         "outputPerSec": null,
         "inputPerSec": null
       },
@@ -2128,9 +2166,9 @@
         "openaiPromptSum": 0,
         "openaiCachedSum": 0,
         "openaiHitRate": null,
-        "anthropicInputSum": 136773,
-        "anthropicCacheReadSum": 587223,
-        "anthropicCacheCreationSum": 149176
+        "anthropicInputSum": 136793,
+        "anthropicCacheReadSum": 594791,
+        "anthropicCacheCreationSum": 152294
       },
       "provider": {
         "queueTimeMean": 0,
@@ -2141,16 +2179,17 @@
     },
     {
       "id": "anthropic/claude-sonnet-4-5-20250929__minimal-servers",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T12-41-18+00-00_progressivemcpbench-minimal-servers_iNpLLbZctJsrsx84bbvzsU.eval",
+      "logPath": "../openbench/logs/2025-12-10T12-41-18+00-00_progressivemcpbench-minimal-servers_iNpLLbZctJsrsx84bbvzsU.eval",
       "modelId": "anthropic/claude-sonnet-4-5-20250929",
       "strategyId": "minimal-servers",
       "task": "progressivemcpbench-minimal-servers",
       "sampleCount": 200,
-      "runAt": "2025-12-10T12:45:29.795Z",
+      "runAt": "2025-12-10T12:41:18.000Z",
       "score": {
         "mean": 0.89,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.31288975694324056
       },
       "time": {
         "totalSum": 2441.2349999999997,
@@ -2192,16 +2231,17 @@
     },
     {
       "id": "anthropic/claude-sonnet-4-5-20250929__directory",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T12-27-37+00-00_progressivemcpbench-directory_M6WzmURHV7Fa6Yo9kiommb.eval",
+      "logPath": "../openbench/logs/2025-12-10T12-27-37+00-00_progressivemcpbench-directory_M6WzmURHV7Fa6Yo9kiommb.eval",
       "modelId": "anthropic/claude-sonnet-4-5-20250929",
       "strategyId": "directory",
       "task": "progressivemcpbench-directory",
       "sampleCount": 200,
-      "runAt": "2025-12-10T12:37:14.215Z",
+      "runAt": "2025-12-10T12:27:37.000Z",
       "score": {
         "mean": 0.89,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.31288975694324056
       },
       "time": {
         "totalSum": 5667.642999999999,
@@ -2243,16 +2283,17 @@
     },
     {
       "id": "anthropic/claude-sonnet-4-5-20250929__copilot",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T12-19-05+00-00_progressivemcpbench-copilot_F7WvX3Gg4YcpjfUdD4WQz4.eval",
+      "logPath": "../openbench/logs/2025-12-10T12-19-05+00-00_progressivemcpbench-copilot_F7WvX3Gg4YcpjfUdD4WQz4.eval",
       "modelId": "anthropic/claude-sonnet-4-5-20250929",
       "strategyId": "copilot",
       "task": "progressivemcpbench-copilot",
       "sampleCount": 200,
-      "runAt": "2025-12-10T12:27:31.989Z",
+      "runAt": "2025-12-10T12:19:05.000Z",
       "score": {
         "mean": 0.945,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.22798026230355975
       },
       "time": {
         "totalSum": 4960.436000000002,
@@ -2294,16 +2335,17 @@
     },
     {
       "id": "anthropic/claude-sonnet-4-5-20250929__distraction-128",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T12-50-20+00-00_progressivemcpbench-distraction-128_bpis2orfm6LBoK7dw3Xhog.eval",
+      "logPath": "../openbench/logs/2025-12-10T12-50-20+00-00_progressivemcpbench-distraction-128_bpis2orfm6LBoK7dw3Xhog.eval",
       "modelId": "anthropic/claude-sonnet-4-5-20250929",
       "strategyId": "distraction-128",
       "task": "progressivemcpbench-distraction-128",
       "sampleCount": 200,
-      "runAt": "2025-12-10T12:55:04.347Z",
+      "runAt": "2025-12-10T12:50:20.000Z",
       "score": {
         "mean": 0.895,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.30655342111938666
       },
       "time": {
         "totalSum": 2761.6119999999996,
@@ -2345,37 +2387,38 @@
     },
     {
       "id": "google/gemini-3-pro-preview__minimal-tools",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T14-15-20+00-00_progressivemcpbench-minimal-tools_Y7pdMGg8Y8nh24SoHocP2N.eval",
+      "logPath": "../openbench/logs/2025-12-16T11-42-24+00-00_progressivemcpbench-minimal-tools_8SfukFghzVcXRvrVrNLPvu.eval",
       "modelId": "google/gemini-3-pro-preview",
       "strategyId": "minimal-tools",
       "task": "progressivemcpbench-minimal-tools",
       "sampleCount": 200,
-      "runAt": "2025-12-10T14:35:24.774Z",
+      "runAt": "2025-12-16T11:42:24.000Z",
       "score": {
-        "mean": 0,
+        "mean": 0.36,
         "min": 0,
-        "max": 0
+        "max": 1,
+        "stdDev": 0.4800000000000016
       },
       "time": {
-        "totalSum": 12029.264000000005,
-        "totalMean": 60.146320000000024,
-        "totalP50": 60.131,
-        "totalP95": 60.306,
-        "workingSum": 12027.420999999995,
-        "workingMean": 60.13710499999998,
-        "llmHttpSum": 0,
-        "llmHttpMean": null,
-        "llmTimeFraction": 0,
-        "toolTimeApprox": 12027.420999999995
+        "totalSum": 10710.332000000004,
+        "totalMean": 53.55166000000002,
+        "totalP50": 60.139,
+        "totalP95": 89.179,
+        "workingSum": 8746.093,
+        "workingMean": 43.730465,
+        "llmHttpSum": 1777.5034564219532,
+        "llmHttpMean": 7.62877019923585,
+        "llmTimeFraction": 0.203233999046426,
+        "toolTimeApprox": 6968.589543578048
       },
       "calls": {
-        "modelCalls": 1000,
-        "toolCalls": 0
+        "modelCalls": 999,
+        "toolCalls": 189
       },
       "tokens": {
-        "inputSum": 0,
-        "outputSum": 0,
-        "totalSum": 0,
+        "inputSum": 254449,
+        "outputSum": 9002,
+        "totalSum": 332545,
         "outputPerSec": null,
         "inputPerSec": null
       },
@@ -2396,16 +2439,17 @@
     },
     {
       "id": "google/gemini-3-pro-preview__minimal-servers",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T14-35-30+00-00_progressivemcpbench-minimal-servers_LLvSAH8L8CaiUDx7SXqcq4.eval",
+      "logPath": "../openbench/logs/2025-12-10T14-35-30+00-00_progressivemcpbench-minimal-servers_LLvSAH8L8CaiUDx7SXqcq4.eval",
       "modelId": "google/gemini-3-pro-preview",
       "strategyId": "minimal-servers",
       "task": "progressivemcpbench-minimal-servers",
       "sampleCount": 200,
-      "runAt": "2025-12-10T14:55:33.809Z",
+      "runAt": "2025-12-10T14:35:30.000Z",
       "score": {
         "mean": 0,
         "min": 0,
-        "max": 0
+        "max": 0,
+        "stdDev": 0
       },
       "time": {
         "totalSum": 12028.102000000003,
@@ -2447,16 +2491,17 @@
     },
     {
       "id": "groq/openai/gpt-oss-20b__distraction-64",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-40-38+00-00_progressivemcpbench-distraction-64_mT86hobGxZJZUAsu6f5cUZ.eval",
+      "logPath": "../openbench/logs/2025-12-10T09-40-38+00-00_progressivemcpbench-distraction-64_mT86hobGxZJZUAsu6f5cUZ.eval",
       "modelId": "groq/openai/gpt-oss-20b",
       "strategyId": "distraction-64",
       "task": "progressivemcpbench-distraction-64",
       "sampleCount": 200,
-      "runAt": "2025-12-10T09:41:16.961Z",
+      "runAt": "2025-12-10T09:40:38.000Z",
       "score": {
         "mean": 0.91,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.286181760425084
       },
       "time": {
         "totalSum": 366.21,
@@ -2498,16 +2543,17 @@
     },
     {
       "id": "openai/gpt-5-nano__distraction-64",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T11-26-07+00-00_progressivemcpbench-distraction-64_cVPgsYzSeDL7MS2PTKYso4.eval",
+      "logPath": "../openbench/logs/2025-12-10T11-26-07+00-00_progressivemcpbench-distraction-64_cVPgsYzSeDL7MS2PTKYso4.eval",
       "modelId": "openai/gpt-5-nano",
       "strategyId": "distraction-64",
       "task": "progressivemcpbench-distraction-64",
       "sampleCount": 200,
-      "runAt": "2025-12-10T11:34:53.039Z",
+      "runAt": "2025-12-10T11:26:07.000Z",
       "score": {
         "mean": 0.865,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.34172357249683555
       },
       "time": {
         "totalSum": 5028.079,
@@ -2549,16 +2595,17 @@
     },
     {
       "id": "anthropic/claude-haiku-4-5-20251001__distraction-64",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T12-14-21+00-00_progressivemcpbench-distraction-64_QTjDtTQa5UyvfzLECqeaEL.eval",
+      "logPath": "../openbench/logs/2025-12-10T12-14-21+00-00_progressivemcpbench-distraction-64_QTjDtTQa5UyvfzLECqeaEL.eval",
       "modelId": "anthropic/claude-haiku-4-5-20251001",
       "strategyId": "distraction-64",
       "task": "progressivemcpbench-distraction-64",
       "sampleCount": 200,
-      "runAt": "2025-12-10T12:16:29.790Z",
+      "runAt": "2025-12-10T12:14:21.000Z",
       "score": {
         "mean": 0.95,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.2179449471770337
       },
       "time": {
         "totalSum": 1234.3340000000005,
@@ -2600,37 +2647,38 @@
     },
     {
       "id": "google/gemini-3-pro-preview__copilot",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T13-34-14+00-00_progressivemcpbench-copilot_P54vooYTujfhrWsCEKaRfq.eval",
+      "logPath": "../openbench/logs/2025-12-11T09-48-40+00-00_progressivemcpbench-copilot_Qc9yACQ9JPx2iYfCyPeuJt.eval",
       "modelId": "google/gemini-3-pro-preview",
       "strategyId": "copilot",
       "task": "progressivemcpbench-copilot",
       "sampleCount": 200,
-      "runAt": "2025-12-10T13:55:07.138Z",
+      "runAt": "2025-12-11T09:48:40.000Z",
       "score": {
-        "mean": 0.105,
+        "mean": 0.12,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.3249615361854371
       },
       "time": {
-        "totalSum": 12315.366999999997,
-        "totalMean": 61.57683499999998,
-        "totalP50": 60.1345,
-        "totalP95": 88.161,
-        "workingSum": 11406.001000000002,
-        "workingMean": 57.03000500000001,
-        "llmHttpSum": 2010.5281702112406,
-        "llmHttpMean": 8.592000727398464,
-        "llmTimeFraction": 0.1762693313994309,
-        "toolTimeApprox": 9395.472829788761
+        "totalSum": 12224.113000000001,
+        "totalMean": 61.120565000000006,
+        "totalP50": 60.133,
+        "totalP95": 86.155,
+        "workingSum": 11280.823000000004,
+        "workingMean": 56.40411500000002,
+        "llmHttpSum": 1942.7746846270747,
+        "llmHttpMean": 8.197361538510863,
+        "llmTimeFraction": 0.1722192329963048,
+        "toolTimeApprox": 9338.04831537293
       },
       "calls": {
-        "modelCalls": 1130,
-        "toolCalls": 223
+        "modelCalls": 1135,
+        "toolCalls": 225
       },
       "tokens": {
-        "inputSum": 344050,
-        "outputSum": 10685,
-        "totalSum": 407705,
+        "inputSum": 380811,
+        "outputSum": 10926,
+        "totalSum": 447741,
         "outputPerSec": null,
         "inputPerSec": null
       },
@@ -2651,16 +2699,17 @@
     },
     {
       "id": "google/gemini-3-pro-preview__distraction-64",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T14-55-39+00-00_progressivemcpbench-distraction-64_cPREAaqMzFP4YNhSArgF7T.eval",
+      "logPath": "../openbench/logs/2025-12-10T14-55-39+00-00_progressivemcpbench-distraction-64_cPREAaqMzFP4YNhSArgF7T.eval",
       "modelId": "google/gemini-3-pro-preview",
       "strategyId": "distraction-64",
       "task": "progressivemcpbench-distraction-64",
       "sampleCount": 200,
-      "runAt": "2025-12-10T15:15:44.256Z",
+      "runAt": "2025-12-10T14:55:39.000Z",
       "score": {
         "mean": 0,
         "min": 0,
-        "max": 0
+        "max": 0,
+        "stdDev": 0
       },
       "time": {
         "totalSum": 12035.806000000002,
@@ -2702,16 +2751,17 @@
     },
     {
       "id": "google/gemini-3-pro-preview__distraction-128",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T15-15-54+00-00_progressivemcpbench-distraction-128_oC5yzceoP2bUqJevTi4FMW.eval",
+      "logPath": "../openbench/logs/2025-12-10T15-15-54+00-00_progressivemcpbench-distraction-128_oC5yzceoP2bUqJevTi4FMW.eval",
       "modelId": "google/gemini-3-pro-preview",
       "strategyId": "distraction-128",
       "task": "progressivemcpbench-distraction-128",
       "sampleCount": 200,
-      "runAt": "2025-12-10T15:36:02.491Z",
+      "runAt": "2025-12-10T15:15:54.000Z",
       "score": {
         "mean": 0,
         "min": 0,
-        "max": 0
+        "max": 0,
+        "stdDev": 0
       },
       "time": {
         "totalSum": 12053.801999999992,
@@ -2753,16 +2803,17 @@
     },
     {
       "id": "google/gemini-2.5-flash__copilot",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T12-55-17+00-00_progressivemcpbench-copilot_b6z7TJY5cLSbG7oYAZp2Uf.eval",
+      "logPath": "../openbench/logs/2025-12-10T12-55-17+00-00_progressivemcpbench-copilot_b6z7TJY5cLSbG7oYAZp2Uf.eval",
       "modelId": "google/gemini-2.5-flash",
       "strategyId": "copilot",
       "task": "progressivemcpbench-copilot",
       "sampleCount": 200,
-      "runAt": "2025-12-10T13:02:29.078Z",
+      "runAt": "2025-12-10T12:55:17.000Z",
       "score": {
         "mean": 0.775,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.4175823272122517
       },
       "time": {
         "totalSum": 4174.179999999999,
@@ -2804,16 +2855,17 @@
     },
     {
       "id": "google/gemini-2.5-flash__directory",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T13-02-34+00-00_progressivemcpbench-directory_CaCVhbi4R8PJEhb9in2UGo.eval",
+      "logPath": "../openbench/logs/2025-12-10T13-02-34+00-00_progressivemcpbench-directory_CaCVhbi4R8PJEhb9in2UGo.eval",
       "modelId": "google/gemini-2.5-flash",
       "strategyId": "directory",
       "task": "progressivemcpbench-directory",
       "sampleCount": 200,
-      "runAt": "2025-12-10T13:11:41.089Z",
+      "runAt": "2025-12-10T13:02:34.000Z",
       "score": {
         "mean": 0.87,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.33630343441600447
       },
       "time": {
         "totalSum": 5346.166000000002,
@@ -2855,37 +2907,38 @@
     },
     {
       "id": "google/gemini-2.5-flash__minimal-tools",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T13-11-48+00-00_progressivemcpbench-minimal-tools_JwiguF2ETZMeCBhzq9ECmx.eval",
+      "logPath": "../openbench/logs/2025-12-16T11-38-15+00-00_progressivemcpbench-minimal-tools_KZopVbuzhebZKZaBr9jZop.eval",
       "modelId": "google/gemini-2.5-flash",
       "strategyId": "minimal-tools",
       "task": "progressivemcpbench-minimal-tools",
       "sampleCount": 200,
-      "runAt": "2025-12-10T13:16:18.557Z",
+      "runAt": "2025-12-16T11:38:15.000Z",
       "score": {
-        "mean": 0.89,
+        "mean": 0.91,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.2861817604250839
       },
       "time": {
-        "totalSum": 2547.2539999999985,
-        "totalMean": 12.736269999999992,
-        "totalP50": 11.8235,
-        "totalP95": 25.233,
-        "workingSum": 2536.401,
-        "workingMean": 12.682004999999998,
-        "llmHttpSum": 2427.3087561267894,
-        "llmHttpMean": 4.953691339034264,
-        "llmTimeFraction": 0.9569893546512517,
-        "toolTimeApprox": 109.09224387321046
+        "totalSum": 2337.7549999999997,
+        "totalMean": 11.688774999999998,
+        "totalP50": 10.9185,
+        "totalP95": 21.63,
+        "workingSum": 2323.152,
+        "workingMean": 11.61576,
+        "llmHttpSum": 2222.5870647881093,
+        "llmHttpMean": 4.50829019226797,
+        "llmTimeFraction": 0.9567118573335319,
+        "toolTimeApprox": 100.56493521189077
       },
       "calls": {
-        "modelCalls": 490,
-        "toolCalls": 328
+        "modelCalls": 493,
+        "toolCalls": 326
       },
       "tokens": {
-        "inputSum": 527909,
-        "outputSum": 16351,
-        "totalSum": 654682,
+        "inputSum": 523670,
+        "outputSum": 15867,
+        "totalSum": 640950,
         "outputPerSec": null,
         "inputPerSec": null
       },
@@ -2906,16 +2959,17 @@
     },
     {
       "id": "google/gemini-2.5-flash__minimal-servers",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T13-16-23+00-00_progressivemcpbench-minimal-servers_9XWpZGtCPqymsv7HcYE6cB.eval",
+      "logPath": "../openbench/logs/2025-12-10T13-16-23+00-00_progressivemcpbench-minimal-servers_9XWpZGtCPqymsv7HcYE6cB.eval",
       "modelId": "google/gemini-2.5-flash",
       "strategyId": "minimal-servers",
       "task": "progressivemcpbench-minimal-servers",
       "sampleCount": 200,
-      "runAt": "2025-12-10T13:20:48.324Z",
+      "runAt": "2025-12-10T13:16:23.000Z",
       "score": {
         "mean": 0.825,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.37996710383926685
       },
       "time": {
         "totalSum": 2508.6450000000004,
@@ -2957,16 +3011,17 @@
     },
     {
       "id": "anthropic/claude-sonnet-4-5-20250929__distraction-64",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T12-45-34+00-00_progressivemcpbench-distraction-64_6TZhUpsysD4SYKNBkD7z6u.eval",
+      "logPath": "../openbench/logs/2025-12-10T12-45-34+00-00_progressivemcpbench-distraction-64_6TZhUpsysD4SYKNBkD7z6u.eval",
       "modelId": "anthropic/claude-sonnet-4-5-20250929",
       "strategyId": "distraction-64",
       "task": "progressivemcpbench-distraction-64",
       "sampleCount": 200,
-      "runAt": "2025-12-10T12:50:11.024Z",
+      "runAt": "2025-12-10T12:45:34.000Z",
       "score": {
         "mean": 0.885,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.3190219428189853
       },
       "time": {
         "totalSum": 2688.957000000001,
@@ -3008,16 +3063,17 @@
     },
     {
       "id": "google/gemini-2.5-flash__distraction-64",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T13-20-53+00-00_progressivemcpbench-distraction-64_jomveXfv7PYSWgvqbLaLqd.eval",
+      "logPath": "../openbench/logs/2025-12-10T13-20-53+00-00_progressivemcpbench-distraction-64_jomveXfv7PYSWgvqbLaLqd.eval",
       "modelId": "google/gemini-2.5-flash",
       "strategyId": "distraction-64",
       "task": "progressivemcpbench-distraction-64",
       "sampleCount": 200,
-      "runAt": "2025-12-10T13:26:03.226Z",
+      "runAt": "2025-12-10T13:20:53.000Z",
       "score": {
         "mean": 0.84,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.3666060555964678
       },
       "time": {
         "totalSum": 3001.2629999999995,
@@ -3059,16 +3115,17 @@
     },
     {
       "id": "groq/moonshotai/kimi-k2-instruct-0905__distraction-64",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T10-33-00+00-00_progressivemcpbench-distraction-64_W8GdVVf8Vo8AHPXT4QQxVw.eval",
+      "logPath": "../openbench/logs/2025-12-10T10-33-00+00-00_progressivemcpbench-distraction-64_W8GdVVf8Vo8AHPXT4QQxVw.eval",
       "modelId": "groq/moonshotai/kimi-k2-instruct-0905",
       "strategyId": "distraction-64",
       "task": "progressivemcpbench-distraction-64",
       "sampleCount": 200,
-      "runAt": "2025-12-10T10:33:54.922Z",
+      "runAt": "2025-12-10T10:33:00.000Z",
       "score": {
         "mean": 0.7,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.4582575694955846
       },
       "time": {
         "totalSum": 517.2350000000001,
@@ -3110,16 +3167,17 @@
     },
     {
       "id": "groq/minimaxai/minimax-m2__distraction-64",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T10-17-29+00-00_progressivemcpbench-distraction-64_6QFevhHbrp25cyKZHJc4Yt.eval",
+      "logPath": "../openbench/logs/2025-12-10T10-17-29+00-00_progressivemcpbench-distraction-64_6QFevhHbrp25cyKZHJc4Yt.eval",
       "modelId": "groq/minimaxai/minimax-m2",
       "strategyId": "distraction-64",
       "task": "progressivemcpbench-distraction-64",
       "sampleCount": 200,
-      "runAt": "2025-12-10T10:21:53.402Z",
+      "runAt": "2025-12-10T10:17:29.000Z",
       "score": {
         "mean": 0.485,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.49977494935220607
       },
       "time": {
         "totalSum": 2518.956999999999,
@@ -3161,16 +3219,17 @@
     },
     {
       "id": "openai/gpt-5.1__distraction-64",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T11-54-26+00-00_progressivemcpbench-distraction-64_Zet2eiZH8jYenPBgp8f2hZ.eval",
+      "logPath": "../openbench/logs/2025-12-10T11-54-26+00-00_progressivemcpbench-distraction-64_Zet2eiZH8jYenPBgp8f2hZ.eval",
       "modelId": "openai/gpt-5.1",
       "strategyId": "distraction-64",
       "task": "progressivemcpbench-distraction-64",
       "sampleCount": 200,
-      "runAt": "2025-12-10T11:56:52.211Z",
+      "runAt": "2025-12-10T11:54:26.000Z",
       "score": {
         "mean": 0.84,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.36660605559646775
       },
       "time": {
         "totalSum": 1417.3120000000008,
@@ -3212,16 +3271,17 @@
     },
     {
       "id": "groq/openai/gpt-oss-120b__distraction-64",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-52-36+00-00_progressivemcpbench-distraction-64_VPY2sxvzMVRurepVjLJzfK.eval",
+      "logPath": "../openbench/logs/2025-12-10T09-52-36+00-00_progressivemcpbench-distraction-64_VPY2sxvzMVRurepVjLJzfK.eval",
       "modelId": "groq/openai/gpt-oss-120b",
       "strategyId": "distraction-64",
       "task": "progressivemcpbench-distraction-64",
       "sampleCount": 200,
-      "runAt": "2025-12-10T09:53:20.244Z",
+      "runAt": "2025-12-10T09:52:36.000Z",
       "score": {
         "mean": 0.49,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.49989998999799934
       },
       "time": {
         "totalSum": 421.5780000000002,
@@ -3263,16 +3323,17 @@
     },
     {
       "id": "google/gemini-2.5-flash__distraction-128",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T13-26-12+00-00_progressivemcpbench-distraction-128_4rkQPe4ztUp6Bo2ukVSNcB.eval",
+      "logPath": "../openbench/logs/2025-12-10T13-26-12+00-00_progressivemcpbench-distraction-128_4rkQPe4ztUp6Bo2ukVSNcB.eval",
       "modelId": "google/gemini-2.5-flash",
       "strategyId": "distraction-128",
       "task": "progressivemcpbench-distraction-128",
       "sampleCount": 200,
-      "runAt": "2025-12-10T13:33:58.771Z",
+      "runAt": "2025-12-10T13:26:12.000Z",
       "score": {
         "mean": 0.825,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.3799671038392669
       },
       "time": {
         "totalSum": 4578.469000000002,
@@ -3314,16 +3375,17 @@
     },
     {
       "id": "groq/llama-3.3-70b-versatile__minimal-tools",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-04T05-17-59+00-00_progressivemcpbench-synthetic-minimal-tools_TyenjEmgDgNqsgf372hXWK.eval",
+      "logPath": "../openbench/logs/2025-12-04T05-17-59+00-00_progressivemcpbench-synthetic-minimal-tools_TyenjEmgDgNqsgf372hXWK.eval",
       "modelId": "groq/llama-3.3-70b-versatile",
       "strategyId": "minimal-tools",
       "task": "progressivemcpbench-synthetic-minimal-tools",
       "sampleCount": 5,
-      "runAt": "2025-12-04T05:18:00.751Z",
+      "runAt": "2025-12-04T05:17:59.000Z",
       "score": {
         "mean": 0.8,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.4
       },
       "time": {
         "totalSum": 6.326,
@@ -3365,31 +3427,32 @@
     },
     {
       "id": "groq/emberglow/small__copilot",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-42-27+00-00_progressivemcpbench-copilot_TRnoJzV34R2y6QDnh5Btrj.eval",
+      "logPath": "../openbench/logs/2025-12-11T09-47-57+00-00_progressivemcpbench-copilot_EcbMbUDnH554RzmH2zpFdN.eval",
       "modelId": "groq/emberglow/small",
       "strategyId": "copilot",
       "task": "progressivemcpbench-copilot",
-      "sampleCount": 200,
-      "runAt": "2025-12-10T09:43:14.082Z",
+      "sampleCount": 30,
+      "runAt": "2025-12-11T09:47:57.000Z",
       "score": {
         "mean": 0,
         "min": 0,
-        "max": 0
+        "max": 0,
+        "stdDev": 0
       },
       "time": {
-        "totalSum": 450.44500000000005,
-        "totalMean": 2.252225,
-        "totalP50": 2.2175000000000002,
-        "totalP95": 2.952,
-        "workingSum": 450.37400000000025,
-        "workingMean": 2.251870000000001,
-        "llmHttpSum": 10.31477096164599,
-        "llmHttpMean": 0.05157385480822995,
-        "llmTimeFraction": 0.022902678577462254,
-        "toolTimeApprox": 440.05922903835426
+        "totalSum": 103.43800000000002,
+        "totalMean": 3.4479333333333337,
+        "totalP50": 3.708,
+        "totalP95": 4.342,
+        "workingSum": 103.299,
+        "workingMean": 3.4433000000000002,
+        "llmHttpSum": 6.856643541716039,
+        "llmHttpMean": 0.22855478472386798,
+        "llmTimeFraction": 0.06637666910343797,
+        "toolTimeApprox": 96.44235645828397
       },
       "calls": {
-        "modelCalls": 200,
+        "modelCalls": 30,
         "toolCalls": 0
       },
       "tokens": {
@@ -3416,16 +3479,17 @@
     },
     {
       "id": "groq/emberglow/small__directory",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-43-16+00-00_progressivemcpbench-directory_oHdH7r9vgzBNarr7Mhs8tY.eval",
+      "logPath": "../openbench/logs/2025-12-10T09-43-16+00-00_progressivemcpbench-directory_oHdH7r9vgzBNarr7Mhs8tY.eval",
       "modelId": "groq/emberglow/small",
       "strategyId": "directory",
       "task": "progressivemcpbench-directory",
       "sampleCount": 200,
-      "runAt": "2025-12-10T09:44:02.017Z",
+      "runAt": "2025-12-10T09:43:16.000Z",
       "score": {
         "mean": 0,
         "min": 0,
-        "max": 0
+        "max": 0,
+        "stdDev": 0
       },
       "time": {
         "totalSum": 438.00900000000007,
@@ -3467,16 +3531,17 @@
     },
     {
       "id": "groq/emberglow/small__minimal-tools",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-44-04+00-00_progressivemcpbench-minimal-tools_iNJDXWCg8mr6eUCGd4y2Xq.eval",
+      "logPath": "../openbench/logs/2025-12-10T09-44-04+00-00_progressivemcpbench-minimal-tools_iNJDXWCg8mr6eUCGd4y2Xq.eval",
       "modelId": "groq/emberglow/small",
       "strategyId": "minimal-tools",
       "task": "progressivemcpbench-minimal-tools",
       "sampleCount": 200,
-      "runAt": "2025-12-10T09:44:09.269Z",
+      "runAt": "2025-12-10T09:44:04.000Z",
       "score": {
         "mean": 0,
         "min": 0,
-        "max": 0
+        "max": 0,
+        "stdDev": 0
       },
       "time": {
         "totalSum": 36.890000000000015,
@@ -3518,16 +3583,17 @@
     },
     {
       "id": "groq/emberglow/small__minimal-servers",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-44-12+00-00_progressivemcpbench-minimal-servers_FFxwgMxCzZfuR4UdvJmggL.eval",
+      "logPath": "../openbench/logs/2025-12-10T09-44-12+00-00_progressivemcpbench-minimal-servers_FFxwgMxCzZfuR4UdvJmggL.eval",
       "modelId": "groq/emberglow/small",
       "strategyId": "minimal-servers",
       "task": "progressivemcpbench-minimal-servers",
       "sampleCount": 200,
-      "runAt": "2025-12-10T09:44:17.054Z",
+      "runAt": "2025-12-10T09:44:12.000Z",
       "score": {
         "mean": 0,
         "min": 0,
-        "max": 0
+        "max": 0,
+        "stdDev": 0
       },
       "time": {
         "totalSum": 41.23499999999999,
@@ -3569,16 +3635,17 @@
     },
     {
       "id": "groq/emberglow/small__distraction-64",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-44-20+00-00_progressivemcpbench-distraction-64_mi4AZbJ9oAXNNQgLKf4imT.eval",
+      "logPath": "../openbench/logs/2025-12-10T09-44-20+00-00_progressivemcpbench-distraction-64_mi4AZbJ9oAXNNQgLKf4imT.eval",
       "modelId": "groq/emberglow/small",
       "strategyId": "distraction-64",
       "task": "progressivemcpbench-distraction-64",
       "sampleCount": 200,
-      "runAt": "2025-12-10T09:44:29.337Z",
+      "runAt": "2025-12-10T09:44:20.000Z",
       "score": {
         "mean": 0,
         "min": 0,
-        "max": 0
+        "max": 0,
+        "stdDev": 0
       },
       "time": {
         "totalSum": 76.90200000000003,
@@ -3620,16 +3687,17 @@
     },
     {
       "id": "groq/emberglow/small__distraction-128",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T09-44-34+00-00_progressivemcpbench-distraction-128_Pv5Wxyn3WBadHfhgTYBhQ4.eval",
+      "logPath": "../openbench/logs/2025-12-10T09-44-34+00-00_progressivemcpbench-distraction-128_Pv5Wxyn3WBadHfhgTYBhQ4.eval",
       "modelId": "groq/emberglow/small",
       "strategyId": "distraction-128",
       "task": "progressivemcpbench-distraction-128",
       "sampleCount": 200,
-      "runAt": "2025-12-10T09:44:47.341Z",
+      "runAt": "2025-12-10T09:44:34.000Z",
       "score": {
         "mean": 0,
         "min": 0,
-        "max": 0
+        "max": 0,
+        "stdDev": 0
       },
       "time": {
         "totalSum": 103.46400000000001,
@@ -3671,37 +3739,506 @@
     },
     {
       "id": "groq-responses/openai/gpt-oss-20b__minimal-servers",
-      "logPath": "/Users/glenmaddern/src/projects/openbench/logs/2025-12-10T04-27-15+00-00_progressivemcpbench-minimal-servers-remote_cGC27BoMEJ2i358px5Kyws.eval",
+      "logPath": "../openbench/logs/2025-12-15T11-52-28+00-00_progressivemcpbench-minimal-servers-remote_eHLYNnWtomGR78ntNCAiLm.eval",
       "modelId": "groq-responses/openai/gpt-oss-20b",
       "strategyId": "minimal-servers",
       "task": "progressivemcpbench-minimal-servers-remote",
       "sampleCount": 200,
-      "runAt": "2025-12-10T04:28:35.652Z",
+      "runAt": "2025-12-15T11:52:28.000Z",
       "score": {
-        "mean": 0.895,
+        "mean": 0.88,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "stdDev": 0.32496153618543805
       },
       "time": {
-        "totalSum": 721.063,
-        "totalMean": 3.605315,
-        "totalP50": 2.9505,
-        "totalP95": 7.513,
-        "workingSum": 720.2969999999995,
-        "workingMean": 3.601484999999997,
+        "totalSum": 412.55299999999994,
+        "totalMean": 2.0627649999999997,
+        "totalP50": 1.8365,
+        "totalP95": 3.084,
+        "workingSum": 411.6290000000001,
+        "workingMean": 2.0581450000000006,
         "llmHttpSum": 0,
         "llmHttpMean": null,
         "llmTimeFraction": 0,
-        "toolTimeApprox": 720.2969999999995
+        "toolTimeApprox": 411.6290000000001
       },
       "calls": {
         "modelCalls": 0,
         "toolCalls": 0
       },
       "tokens": {
-        "inputSum": 288039,
-        "outputSum": 21651,
-        "totalSum": 309690,
+        "inputSum": 276545,
+        "outputSum": 19350,
+        "totalSum": 295895,
+        "outputPerSec": null,
+        "inputPerSec": null
+      },
+      "cache": {
+        "openaiPromptSum": 0,
+        "openaiCachedSum": 0,
+        "openaiHitRate": null,
+        "anthropicInputSum": 0,
+        "anthropicCacheReadSum": 0,
+        "anthropicCacheCreationSum": 0
+      },
+      "provider": {
+        "queueTimeMean": null,
+        "promptTimeMean": null,
+        "completionTimeMean": null,
+        "providerTimeMean": null
+      }
+    },
+    {
+      "id": "groq/emberglow/large__copilot",
+      "logPath": "../openbench/logs/2025-12-11T23-57-42+00-00_progressivemcpbench-copilot_CZgxxB6xWFZ6mb2j5e57dU.eval",
+      "modelId": "groq/emberglow/large",
+      "strategyId": "copilot",
+      "task": "progressivemcpbench-copilot",
+      "sampleCount": 200,
+      "runAt": "2025-12-11T23:57:42.000Z",
+      "score": {
+        "mean": 0.97,
+        "min": 0,
+        "max": 1,
+        "stdDev": 0.1705872210923194
+      },
+      "time": {
+        "totalSum": 1379.250999999999,
+        "totalMean": 6.896254999999996,
+        "totalP50": 6.4045000000000005,
+        "totalP95": 9.847,
+        "workingSum": 1371.8339999999998,
+        "workingMean": 6.859169999999999,
+        "llmHttpSum": 396.5918451913167,
+        "llmHttpMean": 0.5323380472366667,
+        "llmTimeFraction": 0.28909608975380163,
+        "toolTimeApprox": 975.2421548086832
+      },
+      "calls": {
+        "modelCalls": 745,
+        "toolCalls": 545
+      },
+      "tokens": {
+        "inputSum": 1102959,
+        "outputSum": 106386,
+        "totalSum": 1209345,
+        "outputPerSec": 510.4626199146328,
+        "inputPerSec": 69952.59398670497
+      },
+      "cache": {
+        "openaiPromptSum": 1102959,
+        "openaiCachedSum": 866560,
+        "openaiHitRate": 0.7856683702658032,
+        "anthropicInputSum": 0,
+        "anthropicCacheReadSum": 0,
+        "anthropicCacheCreationSum": 0
+      },
+      "provider": {
+        "queueTimeMean": 0.16624524472207144,
+        "promptTimeMean": 0.021959462370351183,
+        "completionTimeMean": 0.27807025060152385,
+        "providerTimeMean": 0.3000297129718748
+      }
+    },
+    {
+      "id": "groq/emberglow/large__directory",
+      "logPath": "../openbench/logs/2025-12-12T00-00-15+00-00_progressivemcpbench-directory_Zo8PwgiQVeV6GeZrhtBABp.eval",
+      "modelId": "groq/emberglow/large",
+      "strategyId": "directory",
+      "task": "progressivemcpbench-directory",
+      "sampleCount": 200,
+      "runAt": "2025-12-12T00:00:15.000Z",
+      "score": {
+        "mean": 0.005,
+        "min": 0,
+        "max": 1,
+        "stdDev": 0.07053367989832945
+      },
+      "time": {
+        "totalSum": 11694.465999999991,
+        "totalMean": 58.47232999999996,
+        "totalP50": 62.298,
+        "totalP95": 64.071,
+        "workingSum": 11353.262999999995,
+        "workingMean": 56.76631499999998,
+        "llmHttpSum": 9770.442163792672,
+        "llmHttpMean": 0.5786119959607172,
+        "llmTimeFraction": 0.8605845001382136,
+        "toolTimeApprox": 1582.8208362073237
+      },
+      "calls": {
+        "modelCalls": 17045,
+        "toolCalls": 16879
+      },
+      "tokens": {
+        "inputSum": 85936092,
+        "outputSum": 2338516,
+        "totalSum": 88274608,
+        "outputPerSec": 492.1894139156078,
+        "inputPerSec": 244513.9491861153
+      },
+      "cache": {
+        "openaiPromptSum": 85936092,
+        "openaiCachedSum": 82513920,
+        "openaiHitRate": 0.9601777097334144,
+        "anthropicInputSum": 0,
+        "anthropicCacheReadSum": 0,
+        "anthropicCacheCreationSum": 0
+      },
+      "provider": {
+        "queueTimeMean": 0.1633373540173121,
+        "promptTimeMean": 0.0205585873997506,
+        "completionTimeMean": 0.2780561638964057,
+        "providerTimeMean": 0.29861475129615644
+      }
+    },
+    {
+      "id": "groq/emberglow/large__minimal-tools",
+      "logPath": "../openbench/logs/2025-12-16T11-18-37+00-00_progressivemcpbench-minimal-tools_exKdwUpwBbkitKMjBNV2KX.eval",
+      "modelId": "groq/emberglow/large",
+      "strategyId": "minimal-tools",
+      "task": "progressivemcpbench-minimal-tools",
+      "sampleCount": 200,
+      "runAt": "2025-12-16T11:18:37.000Z",
+      "score": {
+        "mean": 0.955,
+        "min": 0,
+        "max": 1,
+        "stdDev": 0.2073041244162785
+      },
+      "time": {
+        "totalSum": 433.15900000000005,
+        "totalMean": 2.165795,
+        "totalP50": 1.8285,
+        "totalP95": 3.836,
+        "workingSum": 429.32900000000024,
+        "workingMean": 2.1466450000000012,
+        "llmHttpSum": 313.5191921279911,
+        "llmHttpMean": 0.5659191193646049,
+        "llmTimeFraction": 0.7302539360909488,
+        "toolTimeApprox": 115.80980787200912
+      },
+      "calls": {
+        "modelCalls": 554,
+        "toolCalls": 354
+      },
+      "tokens": {
+        "inputSum": 1307410,
+        "outputSum": 73275,
+        "totalSum": 1380685,
+        "outputPerSec": 431.7243161585513,
+        "inputPerSec": 75170.94098428107
+      },
+      "cache": {
+        "openaiPromptSum": 1307410,
+        "openaiCachedSum": 1133824,
+        "openaiHitRate": 0.8672291018119794,
+        "anthropicInputSum": 0,
+        "anthropicCacheReadSum": 0,
+        "anthropicCacheCreationSum": 0
+      },
+      "provider": {
+        "queueTimeMean": 0.17734882078762698,
+        "promptTimeMean": 0.025695928100976196,
+        "completionTimeMean": 0.30742565613440465,
+        "providerTimeMean": 0.33312158423538096
+      }
+    },
+    {
+      "id": "groq/emberglow/large__minimal-servers",
+      "logPath": "../openbench/logs/2025-12-12T00-25-25+00-00_progressivemcpbench-minimal-servers_MxJHg3tfDPExNFXcM4Ymjx.eval",
+      "modelId": "groq/emberglow/large",
+      "strategyId": "minimal-servers",
+      "task": "progressivemcpbench-minimal-servers",
+      "sampleCount": 200,
+      "runAt": "2025-12-12T00:25:25.000Z",
+      "score": {
+        "mean": 0.95,
+        "min": 0,
+        "max": 1,
+        "stdDev": 0.21794494717703355
+      },
+      "time": {
+        "totalSum": 509.3800000000003,
+        "totalMean": 2.5469000000000013,
+        "totalP50": 2.3565,
+        "totalP95": 4.053,
+        "workingSum": 504.3899999999999,
+        "workingMean": 2.5219499999999995,
+        "llmHttpSum": 342.4522762943525,
+        "llmHttpMean": 0.5444392309926113,
+        "llmTimeFraction": 0.67894342927963,
+        "toolTimeApprox": 161.9377237056474
+      },
+      "calls": {
+        "modelCalls": 629,
+        "toolCalls": 429
+      },
+      "tokens": {
+        "inputSum": 2636373,
+        "outputSum": 79608,
+        "totalSum": 2715981,
+        "outputPerSec": 492.4175759115456,
+        "inputPerSec": 67904.08715742016
+      },
+      "cache": {
+        "openaiPromptSum": 2636373,
+        "openaiCachedSum": 2325760,
+        "openaiHitRate": 0.8821816943201891,
+        "anthropicInputSum": 0,
+        "anthropicCacheReadSum": 0,
+        "anthropicCacheCreationSum": 0
+      },
+      "provider": {
+        "queueTimeMean": 0.1601878270254492,
+        "promptTimeMean": 0.055099758171583295,
+        "completionTimeMean": 0.2701505400830253,
+        "providerTimeMean": 0.3252502982546087
+      }
+    },
+    {
+      "id": "groq/emberglow/large__distraction-64",
+      "logPath": "../openbench/logs/2025-12-12T00-26-26+00-00_progressivemcpbench-distraction-64_d4Z5BD9oVrGZKXzaK5e48f.eval",
+      "modelId": "groq/emberglow/large",
+      "strategyId": "distraction-64",
+      "task": "progressivemcpbench-distraction-64",
+      "sampleCount": 200,
+      "runAt": "2025-12-12T00:26:26.000Z",
+      "score": {
+        "mean": 0.945,
+        "min": 0,
+        "max": 1,
+        "stdDev": 0.22798026230355964
+      },
+      "time": {
+        "totalSum": 595.4889999999996,
+        "totalMean": 2.9774449999999977,
+        "totalP50": 2.4245,
+        "totalP95": 6.012,
+        "workingSum": 585.3060000000002,
+        "workingMean": 2.926530000000001,
+        "llmHttpSum": 435.8515538049396,
+        "llmHttpMean": 0.7110139540047955,
+        "llmTimeFraction": 0.7446558788137136,
+        "toolTimeApprox": 149.45444619506054
+      },
+      "calls": {
+        "modelCalls": 613,
+        "toolCalls": 413
+      },
+      "tokens": {
+        "inputSum": 8508874,
+        "outputSum": 87769,
+        "totalSum": 8596643,
+        "outputPerSec": 466.7966376373447,
+        "inputPerSec": 116393.63589404462
+      },
+      "cache": {
+        "openaiPromptSum": 8508874,
+        "openaiCachedSum": 8092928,
+        "openaiHitRate": 0.9511162111461516,
+        "anthropicInputSum": 0,
+        "anthropicCacheReadSum": 0,
+        "anthropicCacheCreationSum": 0
+      },
+      "provider": {
+        "queueTimeMean": 0.18883204693766498,
+        "promptTimeMean": 0.12742581603798542,
+        "completionTimeMean": 0.3078448382295558,
+        "providerTimeMean": 0.4352706542675413
+      }
+    },
+    {
+      "id": "groq/emberglow/large__distraction-128",
+      "logPath": "../openbench/logs/2025-12-12T00-27-43+00-00_progressivemcpbench-distraction-128_7FL8ZiyhvhviN7UGbuutUJ.eval",
+      "modelId": "groq/emberglow/large",
+      "strategyId": "distraction-128",
+      "task": "progressivemcpbench-distraction-128",
+      "sampleCount": 200,
+      "runAt": "2025-12-12T00:27:43.000Z",
+      "score": {
+        "mean": 0.955,
+        "min": 0,
+        "max": 1,
+        "stdDev": 0.20730412441627868
+      },
+      "time": {
+        "totalSum": 643.663,
+        "totalMean": 3.218315,
+        "totalP50": 2.517,
+        "totalP95": 7.604,
+        "workingSum": 629.9890000000001,
+        "workingMean": 3.1499450000000007,
+        "llmHttpSum": 479.27201291918755,
+        "llmHttpMean": 0.8137046059748515,
+        "llmTimeFraction": 0.7607625100107898,
+        "toolTimeApprox": 150.7169870808126
+      },
+      "calls": {
+        "modelCalls": 590,
+        "toolCalls": 390
+      },
+      "tokens": {
+        "inputSum": 10842991,
+        "outputSum": 88088,
+        "totalSum": 10931079,
+        "outputPerSec": 441.39847522221567,
+        "inputPerSec": 109863.9900739766
+      },
+      "cache": {
+        "openaiPromptSum": 10842991,
+        "openaiCachedSum": 10344448,
+        "openaiHitRate": 0.9540216348053779,
+        "anthropicInputSum": 0,
+        "anthropicCacheReadSum": 0,
+        "anthropicCacheCreationSum": 0
+      },
+      "provider": {
+        "queueTimeMean": 0.19013422411899722,
+        "promptTimeMean": 0.1627469772278312,
+        "completionTimeMean": 0.35040431265487954,
+        "providerTimeMean": 0.5131512898827112
+      }
+    },
+    {
+      "id": "groq-responses/emberglow/small__minimal-servers",
+      "logPath": "../openbench/logs/2025-12-15T09-55-10+00-00_progressivemcpbench-minimal-servers-remote_LiJdNyUmtFMfKbSFCvMJ47.eval",
+      "modelId": "groq-responses/emberglow/small",
+      "strategyId": "minimal-servers",
+      "task": "progressivemcpbench-minimal-servers-remote",
+      "sampleCount": 59,
+      "runAt": "2025-12-15T09:55:10.000Z",
+      "score": {
+        "mean": 0,
+        "min": 0,
+        "max": 0,
+        "stdDev": 0
+      },
+      "time": {
+        "totalSum": 32.196,
+        "totalMean": 0.5456949152542373,
+        "totalP50": 0.491,
+        "totalP95": 1.36,
+        "workingSum": 32.196,
+        "workingMean": 0.5456949152542373,
+        "llmHttpSum": 0,
+        "llmHttpMean": null,
+        "llmTimeFraction": 0,
+        "toolTimeApprox": 32.196
+      },
+      "calls": {
+        "modelCalls": 0,
+        "toolCalls": 0
+      },
+      "tokens": {
+        "inputSum": 0,
+        "outputSum": 0,
+        "totalSum": 0,
+        "outputPerSec": null,
+        "inputPerSec": null
+      },
+      "cache": {
+        "openaiPromptSum": 0,
+        "openaiCachedSum": 0,
+        "openaiHitRate": null,
+        "anthropicInputSum": 0,
+        "anthropicCacheReadSum": 0,
+        "anthropicCacheCreationSum": 0
+      },
+      "provider": {
+        "queueTimeMean": null,
+        "promptTimeMean": null,
+        "completionTimeMean": null,
+        "providerTimeMean": null
+      }
+    },
+    {
+      "id": "groq-responses/openai/gpt-oss-120b__minimal-servers",
+      "logPath": "../openbench/logs/2025-12-15T11-55-42+00-00_progressivemcpbench-minimal-servers-remote_aZbf6o5xL3VacP5wHyW6D7.eval",
+      "modelId": "groq-responses/openai/gpt-oss-120b",
+      "strategyId": "minimal-servers",
+      "task": "progressivemcpbench-minimal-servers-remote",
+      "sampleCount": 200,
+      "runAt": "2025-12-15T11:55:42.000Z",
+      "score": {
+        "mean": 0.915,
+        "min": 0,
+        "max": 1,
+        "stdDev": 0.27888169534768686
+      },
+      "time": {
+        "totalSum": 726.3610000000001,
+        "totalMean": 3.6318050000000004,
+        "totalP50": 3.3049999999999997,
+        "totalP95": 6.288,
+        "workingSum": 725.7389999999999,
+        "workingMean": 3.6286949999999996,
+        "llmHttpSum": 0,
+        "llmHttpMean": null,
+        "llmTimeFraction": 0,
+        "toolTimeApprox": 725.7389999999999
+      },
+      "calls": {
+        "modelCalls": 0,
+        "toolCalls": 0
+      },
+      "tokens": {
+        "inputSum": 275352,
+        "outputSum": 20221,
+        "totalSum": 295573,
+        "outputPerSec": null,
+        "inputPerSec": null
+      },
+      "cache": {
+        "openaiPromptSum": 0,
+        "openaiCachedSum": 0,
+        "openaiHitRate": null,
+        "anthropicInputSum": 0,
+        "anthropicCacheReadSum": 0,
+        "anthropicCacheCreationSum": 0
+      },
+      "provider": {
+        "queueTimeMean": null,
+        "promptTimeMean": null,
+        "completionTimeMean": null,
+        "providerTimeMean": null
+      }
+    },
+    {
+      "id": "groq-responses/minimaxai/minimax-m2__minimal-servers",
+      "logPath": "../openbench/logs/2025-12-15T12-00-46+00-00_progressivemcpbench-minimal-servers-remote_LWJJVNq7MTbVaFD47tMa2i.eval",
+      "modelId": "groq-responses/minimaxai/minimax-m2",
+      "strategyId": "minimal-servers",
+      "task": "progressivemcpbench-minimal-servers-remote",
+      "sampleCount": 200,
+      "runAt": "2025-12-15T12:00:46.000Z",
+      "score": {
+        "mean": 0.51,
+        "min": 0,
+        "max": 1,
+        "stdDev": 0.49989998999799934
+      },
+      "time": {
+        "totalSum": 748.3829999999999,
+        "totalMean": 3.7419149999999997,
+        "totalP50": 2.483,
+        "totalP95": 12.871,
+        "workingSum": 747.6339999999998,
+        "workingMean": 3.738169999999999,
+        "llmHttpSum": 0,
+        "llmHttpMean": null,
+        "llmTimeFraction": 0,
+        "toolTimeApprox": 747.6339999999998
+      },
+      "calls": {
+        "modelCalls": 0,
+        "toolCalls": 0
+      },
+      "tokens": {
+        "inputSum": 180264,
+        "outputSum": 14308,
+        "totalSum": 194572,
         "outputPerSec": null,
         "inputPerSec": null
       },
