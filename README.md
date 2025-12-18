@@ -1,5 +1,7 @@
 # ProgressiveMCPBench
 
+> **📊 [VIEW THE LIVE LEADERBOARD →](https://progressivemcpbench.groq-dev.workers.dev)**
+
 A benchmark for evaluating how effectively language models can discover and use [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) tools. It tests agents on tasks requiring MCP tools—from file operations to API calls—while controlling *how* tools are presented to the model.
 
 ## Overview
@@ -78,7 +80,7 @@ This runs all configured models across all strategies and saves results to `data
 
 ## Viewing Results
 
-The `report/` directory contains an interactive React dashboard:
+To run locally, the `report/` directory contains an interactive dashboard:
 
 ```bash
 cd report

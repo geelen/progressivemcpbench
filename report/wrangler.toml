@@ -1,0 +1,6 @@
+name = "progressivemcpbench"
+compatibility_date = "2024-12-17"
+account_id = "a4015632099d4648bea283e040e2badf"
+
+[assets]
+directory = "./dist"

@@ -66,7 +66,7 @@ export default function StrategyProgressionChart(props: Props) {
       const startIdx = xAxisData.length;
       PROGRESSION_STRATEGIES.forEach((stratId) => {
         const xIndex = xAxisData.length;
-        xAxisData.push(""); // empty label, we'll use model name below
+        xAxisData.push("");
         
         const run = runsMap.get(`${model.id}::${stratId}`);
         dataPoints.push({

@@ -64,8 +64,9 @@ export default function AdvancedStrategiesChart(props: Props) {
     const separatorPositions: number[] = [];
 
     models.forEach((model, modelIdx) => {
-      // Baseline strategies - label with model name in center
-      const baselineStart = xAxisData.length;
+      const startIdx = xAxisData.length;
+      
+      // Baseline strategies
       BASELINE_STRATEGIES.forEach(stratId => {
         const xIndex = xAxisData.length;
         xAxisData.push("");
@@ -79,12 +80,10 @@ export default function AdvancedStrategiesChart(props: Props) {
           xIndex,
         });
       });
-      const baselineEnd = xAxisData.length - 1;
-      const baselineCenter = Math.round((baselineStart + baselineEnd) / 2);
       
       xAxisData.push(""); // spacer between baseline and advanced
 
-      // Advanced strategies - label with strategy names
+      // Advanced strategies
       ADVANCED_STRATEGIES.forEach(stratId => {
         const xIndex = xAxisData.length;
         xAxisData.push("");
@@ -99,20 +98,20 @@ export default function AdvancedStrategiesChart(props: Props) {
         });
       });
 
+      const endIdx = xAxisData.length - 1;
+      const centerIdx = Math.round((startIdx + endIdx) / 2);
+
       if (modelIdx < models.length - 1) {
         separatorPositions.push(xAxisData.length);
         xAxisData.push(""); // spacer between model groups
       }
       
-      // Build labels - model name at baseline center, strategy names for advanced
-      for (let i = baselineStart; i <= baselineEnd; i++) {
-        xAxisLabels[i] = (i === baselineCenter) ? model.displayName : "";
+      // Only show model name at center position
+      for (let i = startIdx; i <= endIdx; i++) {
+        xAxisLabels[i] = (i === centerIdx) ? model.displayName : "";
       }
-      xAxisLabels[baselineEnd + 1] = ""; // spacer
-      xAxisLabels[baselineEnd + 2] = "Copilot";
-      xAxisLabels[baselineEnd + 3] = "Directory";
       if (modelIdx < models.length - 1) {
-        xAxisLabels[baselineEnd + 4] = ""; // spacer between models
+        xAxisLabels[endIdx + 1] = ""; // spacer between models
       }
     });
 
@@ -245,23 +244,54 @@ export default function AdvancedStrategiesChart(props: Props) {
                     lineWidth: isAdvanced ? 2 : 1.5,
                   },
                 },
-                {
-                  type: isAdvanced ? "rect" : "circle",
-                  shape: isAdvanced ? {
-                    x: meanPoint[0] - radius / 2,
-                    y: meanPoint[1] - radius / 2,
-                    width: radius,
-                    height: radius,
-                    r: 2,
-                  } : {
-                    cx: meanPoint[0],
-                    cy: meanPoint[1],
-                    r: radius,
-                  },
-                  style: {
-                    fill: color,
-                  },
-                },
+                (() => {
+                  const dataIdx = api.value(6);
+                  const d = dataPoints[dataIdx];
+                  const strategyId = d?.strategy;
+                  
+                  if (strategyId === 'copilot') {
+                    // Star shape
+                    const r = 10;
+                    const innerR = r * 0.4;
+                    const points: [number, number][] = [];
+                    for (let i = 0; i < 5; i++) {
+                      const outerAngle = (i * 72 - 90) * Math.PI / 180;
+                      const innerAngle = ((i * 72) + 36 - 90) * Math.PI / 180;
+                      points.push([meanPoint[0] + r * Math.cos(outerAngle), meanPoint[1] + r * Math.sin(outerAngle)]);
+                      points.push([meanPoint[0] + innerR * Math.cos(innerAngle), meanPoint[1] + innerR * Math.sin(innerAngle)]);
+                    }
+                    return {
+                      type: "polygon",
+                      shape: { points },
+                      style: { fill: color },
+                    };
+                  } else if (strategyId === 'directory') {
+                    // Triangle shape
+                    const r = 9;
+                    return {
+                      type: "polygon",
+                      shape: {
+                        points: [
+                          [meanPoint[0], meanPoint[1] - r],
+                          [meanPoint[0] - r * 0.866, meanPoint[1] + r * 0.5],
+                          [meanPoint[0] + r * 0.866, meanPoint[1] + r * 0.5],
+                        ],
+                      },
+                      style: { fill: color },
+                    };
+                  } else {
+                    // Circle for baseline
+                    return {
+                      type: "circle",
+                      shape: {
+                        cx: meanPoint[0],
+                        cy: meanPoint[1],
+                        r: radius,
+                      },
+                      style: { fill: color },
+                    };
+                  }
+                })(),
               ],
             };
           },
@@ -318,7 +348,8 @@ export default function AdvancedStrategiesChart(props: Props) {
       />
       <div style={{ "margin-top": "12px", "font-size": "11px", color: "#888" }}>
         <span style={{ "margin-right": "16px" }}>● Circle = baseline strategies</span>
-        <span>■ Square = advanced discovery strategies</span>
+        <span style={{ "margin-right": "16px" }}>▲ Triangle = Directory</span>
+        <span>★ Star = Copilot</span>
       </div>
     </div>
   );
