@@ -23,6 +23,7 @@ export const MODELS: ModelConfig[] = [
   { id: "anthropic/claude-sonnet-4-5-20250929", provider: "anthropic", displayName: "Claude 4.5 Sonnet", order: 9 },
   { id: "google/gemini-2.5-flash", provider: "google", displayName: "Gemini 2.5 Flash", order: 10 },
   { id: "google/gemini-3-pro-preview", provider: "google", displayName: "Gemini 3 Pro", order: 11 },
+  { id: "google/gemini-3-flash-preview", provider: "google", displayName: "Gemini 3 Flash", order: 12 },
   // { id: "groq/emberglow/small", provider: "groq", displayName: "Emberglow Small", order: 12 },
 ];
 
