@@ -136,7 +136,7 @@ async function main(): Promise<void> {
 Usage: bun run updateReport.ts [options]
 
 Options:
-  -l, --logs <path>        Path to OpenBench logs directory
+  -l, --logs <path>        Path to OpenBench logs directory (default: ../openbench/logs)
   -o, --output <path>      Output path for report.json (default: ../data/reports/report.json)
   --full                   Reprocess all logs (ignore existing report timestamp)
   --min-samples <n>        Minimum samples required for a valid run (default: 2)
@@ -145,11 +145,8 @@ Options:
     process.exit(0);
   }
 
-  const logsDir = values.logs || process.env.LOGS_DIR;
-  if (!logsDir) {
-    console.error("Error: --logs or LOGS_DIR environment variable required");
-    process.exit(1);
-  }
+  const DEFAULT_LOGS_DIR = process.env.LOGS_DIR || resolve(__dirname, "../openbench/logs");
+  const logsDir = values.logs || DEFAULT_LOGS_DIR;
 
   const defaultOutput = resolve(__dirname, "../data/reports/report.json");
   const outputPath = values.output || defaultOutput;
