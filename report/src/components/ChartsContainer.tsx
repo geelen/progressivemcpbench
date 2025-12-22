@@ -4,6 +4,7 @@ import BaselineChart from "./BaselineChart";
 import StrategyProgressionChart from "./StrategyProgressionChart";
 import AdvancedStrategiesChart from "./AdvancedStrategiesChart";
 import TokenEfficiencyChart from "./TokenEfficiencyChart";
+import ServerSideMCPChart from "./ServerSideMCPChart";
 
 interface Props {
   runs: RunSummary[];
@@ -190,6 +191,21 @@ export default function ChartsContainer(props: Props) {
           which servers are needed.
         </p>
         <TokenEfficiencyChart
+          runs={filteredRuns()}
+          models={filteredModels()}
+          strategies={props.strategies}
+        />
+      </section>
+
+      <section>
+        <h2>5. Server-Side MCP</h2>
+        <p class="section-intro">
+          Performance comparison of server-side MCP execution (remote) vs local agentic loops.
+          Shows how providers' native tool discovery mechanisms (Groq's directory mode, 
+          Anthropic's regex/BM25 tool search) compare to the local minimal-servers baseline.
+          The faded circle shows local performance, while other shapes show remote variants.
+        </p>
+        <ServerSideMCPChart
           runs={filteredRuns()}
           models={filteredModels()}
           strategies={props.strategies}

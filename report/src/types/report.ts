@@ -19,11 +19,14 @@ export interface MetricConfig {
   unit?: string;
 }
 
+export type ToolDiscoveryMode = "directory" | "regex" | "bm25";
+
 export interface RunSummary {
   id: string;
   logPath: string;
   modelId: string;
   strategyId: string;
+  toolDiscovery?: ToolDiscoveryMode;
   task: string | null;
   sampleCount: number;
   runAt: string;

@@ -9,6 +9,15 @@ export interface StrategyConfig {
   displayName: string;
 }
 
+export type ToolDiscoveryMode = "directory" | "regex" | "bm25";
+
+export interface RemoteRunConfig {
+  modelId: string;
+  provider: string;
+  toolDiscovery?: ToolDiscoveryMode;
+  displayName: string;
+}
+
 export const MODELS: ModelConfig[] = [
   { id: "groq/openai/gpt-oss-20b", provider: "groq", displayName: "GPT OSS 20B" },
   // { id: "groq/emberglow/large", provider: "groq", displayName: "Emberglow Large" },
@@ -33,5 +42,35 @@ export const STRATEGIES: StrategyConfig[] = [
   { id: "distraction-64", displayName: "Distraction 64" },
   { id: "distraction-128", displayName: "Distraction 128" },
 ];
+
+export const REMOTE_STRATEGY = "minimal-servers-remote";
+
+export const TOOL_DISCOVERY_BY_PROVIDER: Record<string, (ToolDiscoveryMode | undefined)[]> = {
+  groq: [undefined, "directory"],
+  anthropic: [undefined, "regex", "bm25"],
+};
+
+export function getRemoteRunConfigs(): RemoteRunConfig[] {
+  const configs: RemoteRunConfig[] = [];
+
+  for (const model of MODELS) {
+    const toolDiscoveryModes = TOOL_DISCOVERY_BY_PROVIDER[model.provider];
+    if (!toolDiscoveryModes) continue;
+
+    for (const toolDiscovery of toolDiscoveryModes) {
+      const suffix = toolDiscovery ? ` (${toolDiscovery})` : "";
+      configs.push({
+        modelId: model.id,
+        provider: model.provider,
+        toolDiscovery,
+        displayName: `${model.displayName}${suffix}`,
+      });
+    }
+  }
+
+  return configs;
+}
+
+export const REMOTE_RUN_CONFIGS = getRemoteRunConfigs();
 
 export const EPOCHS = 10;

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { spawn } from "child_process";
 import { parseArgs } from "util";
-import { MODELS, STRATEGIES, EPOCHS } from "./benchConfig";
+import { MODELS, STRATEGIES, EPOCHS, REMOTE_STRATEGY, REMOTE_RUN_CONFIGS } from "./benchConfig";
 
 const DEFAULT_OPENBENCH_DIR = process.env.OPENBENCH_DIR || "../openbench";
 
@@ -30,6 +30,7 @@ interface RunOptions {
   epochs?: number;
   dryRun?: boolean;
   openbenchDir: string;
+  includeRemote?: boolean;
 }
 
 async function runFullBench(options: RunOptions): Promise<void> {
@@ -39,7 +40,12 @@ async function runFullBench(options: RunOptions): Promise<void> {
     epochs = EPOCHS,
     dryRun = false,
     openbenchDir,
+    includeRemote = false,
   } = options;
+
+  const remoteConfigs = includeRemote
+    ? REMOTE_RUN_CONFIGS.filter((c) => models.includes(c.modelId))
+    : [];
 
   console.log("=== Progressive MCP Bench Full Run ===");
   console.log(`OpenBench dir: ${openbenchDir}`);
@@ -47,6 +53,9 @@ async function runFullBench(options: RunOptions): Promise<void> {
   console.log(`Strategies: ${strategies.length}`);
   console.log(`Epochs: ${epochs}`);
   console.log(`Total combinations: ${models.length * strategies.length}`);
+  if (remoteConfigs.length > 0) {
+    console.log(`Remote runs: ${remoteConfigs.length}`);
+  }
   console.log("");
 
   for (const model of models) {
@@ -56,6 +65,27 @@ async function runFullBench(options: RunOptions): Promise<void> {
       console.log(`--- Strategy: ${strategy} ---`);
 
       const cmd = `uv run bench eval progressivemcpbench --model "${model}" --alpha --epochs ${epochs} --epochs-reducer mean -T strategy=${strategy}`;
+
+      if (dryRun) {
+        console.log(`[DRY RUN] ${cmd}`);
+      } else {
+        const exitCode = await runCommand(cmd, openbenchDir);
+        if (exitCode !== 0) {
+          console.error(`Warning: bench exited with code ${exitCode}`);
+        }
+      }
+    }
+  }
+
+  if (remoteConfigs.length > 0) {
+    console.log("\n===== REMOTE RUNS =====");
+    for (const config of remoteConfigs) {
+      const toolDiscoveryFlag = config.toolDiscovery
+        ? ` -T tool-discovery=${config.toolDiscovery}`
+        : "";
+      console.log(`--- ${config.displayName} ---`);
+
+      const cmd = `uv run bench eval progressivemcpbench --model "${config.modelId}" --alpha --epochs ${epochs} --epochs-reducer mean -T strategy=${REMOTE_STRATEGY}${toolDiscoveryFlag}`;
 
       if (dryRun) {
         console.log(`[DRY RUN] ${cmd}`);
@@ -79,6 +109,7 @@ async function main(): Promise<void> {
       epochs: { type: "string", short: "e" },
       openbench: { type: "string", short: "o" },
       "dry-run": { type: "boolean", default: false },
+      remote: { type: "boolean", short: "r", default: false },
       list: { type: "boolean" },
       help: { type: "boolean", short: "h" },
     },
@@ -94,6 +125,7 @@ Options:
   -e, --epochs <n>       Number of epochs (default: ${EPOCHS})
   -o, --openbench <dir>  Path to openbench directory (default: ../openbench or OPENBENCH_DIR)
   --dry-run              Print commands without executing
+  -r, --remote           Include server-side MCP runs (groq/anthropic only)
   --list                 List all configured models and strategies
   -h, --help             Show this help message
 
@@ -112,6 +144,11 @@ Environment:
     console.log("\nStrategies:");
     for (const strategy of STRATEGIES) {
       console.log(`  ${strategy.id} (${strategy.displayName})`);
+    }
+    console.log("\nRemote runs (server-side MCP):");
+    for (const config of REMOTE_RUN_CONFIGS) {
+      const discoveryStr = config.toolDiscovery ? `tool-discovery=${config.toolDiscovery}` : "(default)";
+      console.log(`  ${config.modelId} ${discoveryStr}`);
     }
     process.exit(0);
   }
@@ -132,6 +169,7 @@ Environment:
     epochs,
     dryRun: values["dry-run"],
     openbenchDir,
+    includeRemote: values.remote,
   });
 }
 
