@@ -8,6 +8,7 @@
     "report:build": "pnpm --filter report build",
     "report:preview": "pnpm --filter report preview",
     "report:update": "cd scripts && bun run updateReport.ts",
+    "extract:stats": "cd scripts && bun run extractEvalStats.ts",
     "bench:run": "cd scripts && bun run runFullBench.ts",
     "bench:list": "cd scripts && bun run runFullBench.ts --list",
     "typecheck": "pnpm --filter @progressivemcpbench/scripts typecheck"

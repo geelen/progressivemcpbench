@@ -180,6 +180,7 @@ function extractSampleStats(sampleData: Record<string, unknown>): SampleStats {
       const spanId = (event.span_id as string) || "";
       const rootSpanType = getRootSpanType(spanId, spanInfo);
 
+      // Only count model calls within solver contexts (this is the correct filter)
       if (rootSpanType !== "solvers") {
         continue;
       }
@@ -561,4 +562,227 @@ export async function parseLogFile(logFile: string): Promise<EvalStats> {
   } else {
     return parseJsonFile(logFile);
   }
+}
+
+function formatNumber(num: number | null, unit: string = ""): string {
+  if (num === null || num === undefined) return "N/A";
+  return `${num.toLocaleString()}${unit}`;
+}
+
+function formatTime(ms: number | null): string {
+  if (ms === null || ms === undefined) return "N/A";
+  if (ms < 1000) return `${ms.toFixed(0)}ms`;
+  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
+  return `${(ms / 60000).toFixed(1)}m`;
+}
+
+function formatDuration(isoString: string): string {
+  try {
+    const date = new Date(isoString);
+    return date.toLocaleString();
+  } catch {
+    return isoString;
+  }
+}
+
+function formatRunSummary(runs: RunSummary[]): string {
+  if (runs.length === 0) {
+    return "No evaluation runs found matching criteria.";
+  }
+
+  // Sort by timestamp (most recent first)
+  const sortedRuns = [...runs].sort((a, b) => {
+    return new Date(b.runAt).getTime() - new Date(a.runAt).getTime();
+  });
+
+  let output = `\n📊 Evaluation Statistics Summary\n`;
+  output += `Found ${sortedRuns.length} run(s)\n\n`;
+
+  // Group by date
+  const runsByDate = new Map<string, RunSummary[]>();
+  for (const run of sortedRuns) {
+    const date = new Date(run.runAt).toDateString();
+    if (!runsByDate.has(date)) {
+      runsByDate.set(date, []);
+    }
+    runsByDate.get(date)!.push(run);
+  }
+
+  for (const [date, dateRuns] of runsByDate) {
+    output += `📅 ${date}\n`;
+    output += `${"─".repeat(80)}\n`;
+
+    for (const run of dateRuns) {
+      output += `\n🔧 ${run.modelId} + ${run.strategyId}\n`;
+      output += `   Task: ${run.task || "N/A"}\n`;
+      output += `   Samples: ${run.sampleCount}\n`;
+      output += `   Score: ${formatNumber(run.score.mean, "")} (min: ${formatNumber(run.score.min, "")}, max: ${formatNumber(run.score.max, "")})\n`;
+      
+      // Performance metrics
+      output += `   ⏱️  Timing:\n`;
+      output += `      Total: ${formatTime(run.time.totalMean)} avg (${formatTime(run.time.totalP50)} p50, ${formatTime(run.time.totalP95)} p95)\n`;
+      output += `      Working: ${formatTime(run.time.workingMean)} avg\n`;
+      output += `      LLM HTTP: ${formatTime(run.time.llmHttpMean)} avg per call\n`;
+      if (run.time.llmTimeFraction !== null) {
+        output += `      LLM Time Fraction: ${(run.time.llmTimeFraction * 100).toFixed(1)}%\n`;
+      }
+      
+      // Model and tool calls
+      output += `   🔄 Activity:\n`;
+      output += `      LLM: ${run.calls.modelCalls} calls\n`;
+      output += `      Tools: ${run.calls.toolCalls} calls\n`;
+      
+      // Token throughput
+      if (run.tokens.inputPerSec !== null || run.tokens.outputPerSec !== null) {
+        output += `   ⚡ Throughput:\n`;
+        if (run.tokens.inputPerSec !== null) {
+          output += `      Input: ${formatNumber(run.tokens.inputPerSec, "")} tokens/sec\n`;
+        }
+        if (run.tokens.outputPerSec !== null) {
+          output += `      Output: ${formatNumber(run.tokens.outputPerSec, "")} tokens/sec\n`;
+        }
+      }
+      
+      // Token usage
+      output += `   🔢 Tokens: ${formatNumber(run.tokens.inputSum, " in")}, ${formatNumber(run.tokens.outputSum, " out")}`;
+      
+      // Cache info
+      if (run.cache.openaiPromptSum > 0) {
+        const hitRate = run.cache.openaiHitRate ? (run.cache.openaiHitRate * 100).toFixed(1) : "N/A";
+        output += ` (OpenAI cache: ${formatNumber(run.cache.openaiCachedSum, "")}/${formatNumber(run.cache.openaiPromptSum, "")} = ${hitRate}% hit)`;
+      } else if (run.cache.anthropicCacheReadSum > 0 || run.cache.anthropicCacheCreationSum > 0) {
+        output += ` (Anthropic cache: ${formatNumber(run.cache.anthropicCacheReadSum, "")} read + ${formatNumber(run.cache.anthropicCacheCreationSum, "")} created)`;
+      }
+      
+      output += `\n`;
+      
+      output += `   📂 Log: ${run.logPath}\n`;
+    }
+    output += `\n`;
+  }
+
+  // Add summary statistics
+  output += `\n📈 Overall Summary\n`;
+  output += `${"─".repeat(80)}\n`;
+
+  const totalSamples = sortedRuns.reduce((sum, run) => sum + run.sampleCount, 0);
+  const totalModelCalls = sortedRuns.reduce((sum, run) => sum + run.calls.modelCalls, 0);
+  const totalToolCalls = sortedRuns.reduce((sum, run) => sum + run.calls.toolCalls, 0);
+  const totalInputTokens = sortedRuns.reduce((sum, run) => sum + run.tokens.inputSum, 0);
+  const totalOutputTokens = sortedRuns.reduce((sum, run) => sum + run.tokens.outputSum, 0);
+
+  output += `Total Runs: ${sortedRuns.length}\n`;
+  output += `Total Samples: ${formatNumber(totalSamples)}\n`;
+  output += `Total Model Calls: ${formatNumber(totalModelCalls)}\n`;
+  output += `Total Tool Calls: ${formatNumber(totalToolCalls)}\n`;
+  output += `Total Input Tokens: ${formatNumber(totalInputTokens)}\n`;
+  output += `Total Output Tokens: ${formatNumber(totalOutputTokens)}\n`;
+
+  return output;
+}
+
+interface CLIOptions {
+  logsDir: string;
+  minSamples?: number;
+  sinceTimestamp?: number;
+  help?: boolean;
+}
+
+async function main(): Promise<void> {
+  const args = process.argv.slice(2);
+  const options: CLIOptions = {
+    logsDir: "",
+    minSamples: 1,
+    sinceTimestamp: 0,
+    help: false,
+  };
+
+  // Parse command line arguments
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+
+    if (arg === "--help" || arg === "-h") {
+      options.help = true;
+    } else if (arg === "--logs" || arg === "-l") {
+      options.logsDir = args[++i] || "";
+    } else if (arg === "--min-samples") {
+      const val = args[++i];
+      options.minSamples = val ? parseInt(val, 10) : 1;
+    } else if (arg === "--since") {
+      const val = args[++i];
+      if (val) {
+        // Parse ISO date string or timestamp
+        const date = new Date(val);
+        if (!isNaN(date.getTime())) {
+          options.sinceTimestamp = date.getTime();
+        } else {
+          const timestamp = parseInt(val, 10);
+          if (!isNaN(timestamp)) {
+            options.sinceTimestamp = timestamp;
+          }
+        }
+      }
+    } else if (!arg.startsWith("--") && !arg.startsWith("-") && options.logsDir === "") {
+      // First non-flag argument is logs directory
+      options.logsDir = arg;
+    }
+  }
+
+  if (options.help) {
+    console.log(`
+🔍 Extract Evaluation Statistics
+
+Usage: bun run extractEvalStats.ts [options] [logs_directory]
+
+Arguments:
+  logs_directory        Path to logs directory (required if not using --logs)
+
+Options:
+  --logs, -l <path>     Path to logs directory
+  --min-samples <n>     Minimum samples required (default: 1)
+  --since <timestamp>    Only process logs newer than this timestamp
+                        (ISO date string or Unix timestamp)
+  --help, -h            Show this help message
+
+Examples:
+  bun run extractEvalStats.ts /path/to/logs
+  bun run extractEvalStats.ts --logs /path/to/logs --min-samples 10
+  bun run extractEvalStats.ts --logs /path/to/logs --since "2025-12-01"
+`);
+    process.exit(0);
+  }
+
+  if (!options.logsDir) {
+    console.error("❌ Error: Logs directory is required");
+    console.error("Use --help for usage information");
+    process.exit(1);
+  }
+
+  try {
+    console.log(`🔍 Extracting evaluation statistics...`);
+    console.log(`📁 Logs directory: ${options.logsDir}`);
+    console.log(`📊 Minimum samples: ${options.minSamples}`);
+    if (options.sinceTimestamp > 0) {
+      console.log(`⏰ Since: ${new Date(options.sinceTimestamp).toISOString()}`);
+    }
+    console.log();
+
+    const runs = await extractEvalStats({
+      logsDir: options.logsDir,
+      minSamples: options.minSamples,
+      sinceTimestamp: options.sinceTimestamp,
+    });
+
+    const output = formatRunSummary(runs);
+    console.log(output);
+
+  } catch (error) {
+    console.error("❌ Error:", error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  }
+}
+
+// Only run main() if this file is executed directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch(console.error);
 }
