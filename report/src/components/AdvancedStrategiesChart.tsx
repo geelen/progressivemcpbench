@@ -22,7 +22,7 @@ export default function AdvancedStrategiesChart(props: Props) {
   let chartInstance: echarts.ECharts | null = null;
 
   const sortedModels = createMemo(() => {
-    return [...props.models].sort((a, b) => a.order - b.order);
+    return [...props.models];
   });
 
   const modelColorMap = createMemo(() => {

@@ -19,7 +19,7 @@ const MODEL_COLORS = [
 
 export default function ChartsContainer(props: Props) {
   const sortedModels = createMemo(() => {
-    return [...props.models].sort((a, b) => a.order - b.order);
+    return [...props.models];
   });
 
   const [selectedModels, setSelectedModels] = createSignal<Set<string>>(

@@ -73,10 +73,14 @@ export default function ResultsTable(props: Props) {
       const stratA = strategyMap().get(a.strategyId);
       const stratB = strategyMap().get(b.strategyId);
 
-      const modelOrder = (modelA?.order ?? 999) - (modelB?.order ?? 999);
+      const modelAIdx = props.models.findIndex(m => m.id === a.modelId);
+      const modelBIdx = props.models.findIndex(m => m.id === b.modelId);
+      const modelOrder = (modelAIdx === -1 ? 999 : modelAIdx) - (modelBIdx === -1 ? 999 : modelBIdx);
       if (modelOrder !== 0) return modelOrder;
 
-      return (stratA?.order ?? 999) - (stratB?.order ?? 999);
+      const stratAIdx = props.strategies.findIndex(s => s.id === a.strategyId);
+      const stratBIdx = props.strategies.findIndex(s => s.id === b.strategyId);
+      return (stratAIdx === -1 ? 999 : stratAIdx) - (stratBIdx === -1 ? 999 : stratBIdx);
     });
   });
 

@@ -94,11 +94,11 @@ export default function BenchmarkChart(props: Props) {
   const [hiddenModels, setHiddenModels] = createSignal<Set<string>>(new Set());
 
   const sortedModels = createMemo(() => {
-    return [...props.models].sort((a, b) => a.order - b.order);
+    return [...props.models];
   });
 
   const sortedStrategies = createMemo(() => {
-    return [...props.strategies].sort((a, b) => a.order - b.order);
+    return [...props.strategies];
   });
 
   const modelColorMap = createMemo(() => {
