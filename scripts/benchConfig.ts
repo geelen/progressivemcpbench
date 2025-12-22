@@ -9,7 +9,7 @@ export interface StrategyConfig {
   displayName: string;
 }
 
-export type ToolDiscoveryMode = "directory" | "regex" | "bm25";
+export type ToolDiscoveryMode = "directory" | "directory-lazy" | "regex" | "bm25";
 
 export interface RemoteRunConfig {
   modelId: string;
@@ -46,7 +46,7 @@ export const STRATEGIES: StrategyConfig[] = [
 export const REMOTE_STRATEGY = "minimal-servers-remote";
 
 export const TOOL_DISCOVERY_BY_PROVIDER: Record<string, (ToolDiscoveryMode | undefined)[]> = {
-  groq: [undefined, "directory"],
+  groq: [undefined, "directory", "directory-lazy"],
   anthropic: [undefined, "regex", "bm25"],
 };
 
