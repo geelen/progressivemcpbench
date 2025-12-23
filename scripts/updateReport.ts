@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-import { MODELS, STRATEGIES } from "./benchConfig";
+import { MODELS, STRATEGIES, ALL_STRATEGY_IDS } from "./benchConfig";
 import { METRICS, type ReportJson, type RunSummary } from "./types/report";
 import { extractEvalStats } from "./extractEvalStats";
 
@@ -21,9 +21,11 @@ async function loadExistingReport(reportPath: string): Promise<ReportJson | null
 
 function extractStrategyFromPath(logPath: string): string {
   const filename = basename(logPath, extname(logPath));
-  for (const strategy of STRATEGIES) {
-    if (filename.includes(strategy.id) || logPath.includes(`strategy=${strategy.id}`)) {
-      return strategy.id;
+  // Sort by length descending to match longer IDs first (e.g., "minimal-servers-remote" before "minimal-servers")
+  const sortedIds = [...ALL_STRATEGY_IDS].sort((a, b) => b.length - a.length);
+  for (const strategyId of sortedIds) {
+    if (filename.includes(strategyId) || logPath.includes(`strategy=${strategyId}`)) {
+      return strategyId;
     }
   }
   const match = filename.match(/strategy[_=]([a-z0-9-]+)/i);

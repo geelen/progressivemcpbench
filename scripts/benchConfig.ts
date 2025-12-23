@@ -50,6 +50,23 @@ export const TOOL_DISCOVERY_BY_PROVIDER: Record<string, (ToolDiscoveryMode | und
   anthropic: [undefined, "regex", "bm25"],
 };
 
+export function getRemoteStrategyIds(): string[] {
+  const ids: string[] = [REMOTE_STRATEGY];
+  for (const modes of Object.values(TOOL_DISCOVERY_BY_PROVIDER)) {
+    for (const mode of modes) {
+      if (mode) {
+        ids.push(`${REMOTE_STRATEGY}-${mode}`);
+      }
+    }
+  }
+  return ids;
+}
+
+export const ALL_STRATEGY_IDS: string[] = [
+  ...STRATEGIES.map(s => s.id),
+  ...getRemoteStrategyIds(),
+];
+
 export function getRemoteRunConfigs(): RemoteRunConfig[] {
   const configs: RemoteRunConfig[] = [];
 
